@@ -14,8 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PeopleRepositoryTests {
 
     private Connection connection;
+    private PeopleRepository repo;
 
-public void checkH2Version(Connection connection) {
+    public void checkH2Version(Connection connection) {
     try {
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT H2VERSION() AS VERSION FROM DUAL");
@@ -38,6 +39,7 @@ public void checkH2Version(Connection connection) {
         connection = DriverManager.getConnection("jdbc:h2:~/projects/JAVA/course/peopledb".replace("~", System.getProperty("user.home")));
         connection.setAutoCommit(false);    // setting auto commit to false to avoid real data changes in the database
         checkH2Version(connection);
+        repo = new PeopleRepository(connection);
     }
 
     @AfterEach
@@ -48,7 +50,6 @@ public void checkH2Version(Connection connection) {
     @Test
 
     public void canSavePerson() {
-        PeopleRepository repo = new PeopleRepository(connection);
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedPerson = repo.save(john);
         assertThat(savedPerson.getId()).isGreaterThan(0);
@@ -56,7 +57,6 @@ public void checkH2Version(Connection connection) {
 
     @Test
     public void canSaveTwoPeople() {
-        PeopleRepository repo = new PeopleRepository(connection);
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedJohn = repo.save(john);
         Person jane = new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6")));

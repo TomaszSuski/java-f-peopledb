@@ -7,6 +7,7 @@ import java.time.ZoneId;
 
 public class PeopleRepository {
 
+    public static final String INSERT_PERSON_SQL = "INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES(?, ?, ?)";
     private final Connection connection;
 
     public PeopleRepository(Connection connection) {
@@ -18,11 +19,11 @@ public class PeopleRepository {
         // Save the person to the database
         // one of possibilities to create sql statement
 //        String sql = String.format("INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES ('%s', '%s', %s)", person.getFirstname(), person.getLastName(), person.getDateOfBirth());
-        // another approach with question marks
-        String sql = "INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES(?, ?, ?)";
+        // another approach with question marks as in constant INSERT_PERSON_SQL
+        // the prepared statement is used to avoid SQL injection
         try {
             // prepare statement to avoid SQL injection, it has the ability to return auto-generated keys
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(INSERT_PERSON_SQL, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, person.getFirstname());
             ps.setString(2, person.getLastName());
             // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
@@ -37,6 +38,7 @@ public class PeopleRepository {
                 // there is also version with column name
                 long id = rs.getLong(1);
                 person.setId(id);
+                System.out.println(person);
             }
             System.out.printf("Rows affected: %d%n", rowsAffected);
         } catch (SQLException e) {
