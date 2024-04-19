@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Person;
 
 import java.sql.*;
@@ -15,7 +16,7 @@ public class PeopleRepository {
         this.connection = connection;
     }
 
-    public Person save(Person person) {
+    public Person save(Person person) throws UnableToSaveException {
         // Save the person to the database
         // one of possibilities to create sql statement
 //        String sql = String.format("INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES ('%s', '%s', %s)", person.getFirstname(), person.getLastName(), person.getDateOfBirth());
@@ -43,6 +44,7 @@ public class PeopleRepository {
             System.out.printf("Rows affected: %d%n", rowsAffected);
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new UnableToSaveException("Unable to save person: " + person);
         }
         return person;
     }
