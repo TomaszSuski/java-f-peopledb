@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,5 +78,28 @@ public class PeopleRepositoryTests {
     public void  testPersonIdNotFound() {
         Optional<Person> person = repo.findById(-1L);
         assertThat(person).isEmpty();
+    }
+
+    @Test
+    public void canFindAllPeople() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Person savedJohn = repo.save(john);
+        Person jane = new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6")));
+        Person savedJane = repo.save(jane);
+        Person tom = new Person("Tom", "Brown", ZonedDateTime.of(1990, 1, 1, 0, 0, 0, 0, ZoneId.of("-6")));
+        Person savedTom = repo.save(tom);
+        Person ann = new Person("Ann", "White", ZonedDateTime.of(1995, 6, 15, 12, 0, 0, 0, ZoneId.of("-6")));
+        Person savedAnn = repo.save(ann);
+        List<Person> people = repo.findAll();
+        assertThat(people).containsExactlyInAnyOrder(savedJohn, savedJane, savedTom, savedAnn);
+    }
+
+    @Test
+    public void canGetCount() {
+        long startCount = repo.count();
+        repo.save(new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6"))));
+        repo.save(new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6"))));
+        long endCount = repo.count();
+        assertThat(endCount).isEqualTo(startCount + 2);
     }
 }

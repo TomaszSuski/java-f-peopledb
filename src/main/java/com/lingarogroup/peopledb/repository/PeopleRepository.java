@@ -1,17 +1,25 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.exception.UnableToLoadException;
 import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Person;
 
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public class PeopleRepository {
 
     public static final String INSERT_PERSON_SQL = "INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES(?, ?, ?)";
     public static final String FIND_BY_ID_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB FROM PEOPLE WHERE ID = ?";
+    public static final String ID = "ID";
+    public static final String FIRST_NAME = "FIRST_NAME";
+    public static final String LAST_NAME = "LAST_NAME";
+    public static final String DOB = "DOB";
+    public static final String FIND_ALL_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB FROM PEOPLE";
+    public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     private final Connection connection;
 
     public PeopleRepository(Connection connection) {
@@ -59,18 +67,55 @@ public class PeopleRepository {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                long personId = rs.getLong("ID");
-                String firstName = rs.getString("FIRST_NAME");
-                String lastName = rs.getString("LAST_NAME");
-                Timestamp dob = rs.getTimestamp("DOB");
+                long personId = rs.getLong(ID);
+                String firstName = rs.getString(FIRST_NAME);
+                String lastName = rs.getString(LAST_NAME);
+                Timestamp dob = rs.getTimestamp(DOB);
                 ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
                 person = new Person(firstName, lastName, dateOFBirth);
                 person.setId(personId);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new UnableToSaveException("Unable to find person with id: " + id);
+            throw new UnableToLoadException("Unable to find person with id: " + id);
         }
         return Optional.ofNullable(person);
+    }
+
+    public List<Person> findAll() {
+        List<Person> people = new java.util.ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement(FIND_ALL_SQL);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                long personId = rs.getLong(ID);
+                String firstName = rs.getString(FIRST_NAME);
+                String lastName = rs.getString(LAST_NAME);
+                Timestamp dob = rs.getTimestamp(DOB);
+                ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
+                Person person = new Person(firstName, lastName, dateOFBirth);
+                person.setId(personId);
+                people.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UnableToLoadException("Unable to find people");
+        }
+        return people;
+    }
+
+    public long count() {
+        long count = 0;
+        try {
+            PreparedStatement ps = connection.prepareStatement(COUNT_ALL_SQL);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                count = rs.getLong("COUNT");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UnableToLoadException("Unable to count people");
+        }
+        return count;
     }
 }
