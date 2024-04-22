@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
     </list>
@@ -61,10 +62,12 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.PeopleDB [:PeopleRepository.main()].executor": "Run",
+    "Gradle.PeopleRepositoryTests.canDeleteMultiple.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonById.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSavePerson.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSaveTwoPeople.executor": "Run",
     "Gradle.PeopleRepositoryTests.executor": "Run",
+    "Gradle.PeopleRepositoryTests.experiment.executor": "Run",
     "Gradle.PersonTest.executor": "Run",
     "Gradle.PersonTest.testForEquality.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -93,7 +96,7 @@
       <recent name="com.lingarogroup.peopledb.model" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.PeopleRepositoryTests">
+  <component name="RunManager" selected="Gradle.PeopleRepositoryTests.canDeleteMultiple">
     <configuration name="PeopleRepositoryTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -108,6 +111,30 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="PeopleRepositoryTests.canDeleteMultiple" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canDeleteMultiple&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -166,7 +193,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PersonTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.experiment" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -179,31 +206,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.model.PersonTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="PersonTest.testForEquality" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.model.PersonTest.testForEquality&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.experiment&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -216,11 +219,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.PeopleRepositoryTests.canDeleteMultiple" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.experiment" />
         <item itemvalue="Gradle.PeopleRepositoryTests" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonById" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canSaveTwoPeople" />
-        <item itemvalue="Gradle.PersonTest" />
-        <item itemvalue="Gradle.PersonTest.testForEquality" />
       </list>
     </recent_temporary>
   </component>

@@ -7,6 +7,7 @@ import com.lingarogroup.peopledb.model.Person;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class PeopleRepository {
     public static final String DOB = "DOB";
     public static final String FIND_ALL_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB FROM PEOPLE";
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
+    public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
     private final Connection connection;
 
     public PeopleRepository(Connection connection) {
@@ -122,12 +124,49 @@ public class PeopleRepository {
     public void delete(Person person) {
         PreparedStatement ps = null;
         try {
-            ps = connection.prepareStatement("DELETE FROM PEOPLE WHERE ID = ?");
+            ps = connection.prepareStatement(DELETE_PERSON_SQL);
             ps.setLong(1, person.getId());
             int affectedRecords = ps.executeUpdate();
             System.out.println("Affected records with delete: " + affectedRecords);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void delete(Person... people) {
+        // the quick and easy way to delete multiple people
+//        for (Person person : people) {
+//            delete(person);
+//        }
+
+        // but for learning db purposes we can use batch processing
+        // it's more efficient to use batch processing for multiple deletes
+        // because it sends multiple queries in one go
+        try {
+            PreparedStatement ps = connection.prepareStatement(DELETE_PERSON_SQL);
+            for (Person person : people) {
+                ps.setLong(1, person.getId());
+                ps.addBatch();
+            }
+            int[] affectedRecords = ps.executeBatch();
+            System.out.println("Affected records with delete: " + affectedRecords.length);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // another example, now using createStatement
+        // using one statement for multiple deletes with multiple ids
+        // BUT it's not recommended to use this approach because of SQL injection
+//        String ids = Arrays.stream(people)
+//                .map(Person::getId)
+//                .map(String::valueOf)
+//                .reduce((s1, s2) -> s1 + "," + s2).orElse("");
+//        try {
+//            Statement statement = connection.createStatement();
+//            int affectedRecords = statement.executeUpdate("DELETE FROM PEOPLE WHERE ID IN (:ids)".replace(":ids", ids));// :ids is a named parameter
+//            System.out.println("Affected records with delete: " + affectedRecords);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

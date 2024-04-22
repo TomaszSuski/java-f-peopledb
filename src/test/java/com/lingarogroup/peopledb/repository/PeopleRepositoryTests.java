@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,4 +112,37 @@ public class PeopleRepositoryTests {
         repo.delete(savedPerson);
         assertThat(repo.findById(savedPerson.getId())).isEmpty();
     }
+
+    @Test
+    public void canDeleteMultiple() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Person savedJohn = repo.save(john);
+        Person jane = new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6")));
+        Person savedJane = repo.save(jane);
+        assertThat(repo.findById(savedJohn.getId())).isNotEmpty();
+        assertThat(repo.findById(savedJane.getId())).isNotEmpty();
+        repo.delete(savedJohn, savedJane);
+    }
+
+//    @Test
+//    public void experiment() {
+//        Person p1 = new Person(null, null, null);
+//        p1.setId(10L);
+//        Person p2 = new Person(null, null, null);
+//        p2.setId(20L);
+//        Person p3 = new Person(null, null, null);
+//        p3.setId(30L);
+//        Person p4 = new Person(null, null, null);
+//        p4.setId(40L);
+//        Person p5 = new Person(null, null, null);
+//        p5.setId(50L);
+//
+//        Person[] people = Arrays.asList(p1, p2, p3, p4, p5).toArray(new Person[]{}); // convert List to Array
+//
+//        String ids = Arrays.stream(people)
+//                .map(Person::getId)
+//                .map(String::valueOf)
+//                .reduce((s1, s2) -> s1 + "," + s2).orElse("");
+//        System.out.println(ids);
+//    }
 }
