@@ -1,6 +1,8 @@
 package com.lingarogroup.peopledb.model;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 public class Person {
     private final String firstname;
@@ -42,5 +44,21 @@ public class Person {
                 ", dateOfBirth=" + dateOfBirth +
                 ", id=" + id +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(firstname, person.firstname)
+                && Objects.equals(lastName, person.lastName)
+                && Objects.equals(dateOfBirth.withZoneSameInstant(ZoneId.of("+0")), person.dateOfBirth.withZoneSameInstant(ZoneId.of("+0")))
+                && Objects.equals(id, person.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstname, lastName, dateOfBirth, id);
     }
 }

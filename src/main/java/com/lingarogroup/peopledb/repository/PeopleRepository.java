@@ -5,6 +5,7 @@ import com.lingarogroup.peopledb.model.Person;
 
 import java.sql.*;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class PeopleRepository {
 
@@ -45,6 +46,28 @@ public class PeopleRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             throw new UnableToSaveException("Unable to save person: " + person);
+        }
+        return person;
+    }
+
+    public Person findById(Long id) {
+        Person person = null;
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT ID, FIRST_NAME, LAST_NAME, DOB FROM PEOPLE WHERE ID = ?");
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                long personId = rs.getLong("ID");
+                String firstName = rs.getString("FIRST_NAME");
+                String lastName = rs.getString("LAST_NAME");
+                Timestamp dob = rs.getTimestamp("DOB");
+                ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
+                person = new Person(firstName, lastName, dateOFBirth);
+                person.setId(personId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UnableToSaveException("Unable to find person with id: " + id);
         }
         return person;
     }
