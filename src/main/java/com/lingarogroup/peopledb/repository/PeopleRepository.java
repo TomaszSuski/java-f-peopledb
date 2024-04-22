@@ -118,4 +118,16 @@ public class PeopleRepository {
         }
         return count;
     }
+
+    public void delete(Person person) {
+        PreparedStatement ps = null;
+        try {
+            ps = connection.prepareStatement("DELETE FROM PEOPLE WHERE ID = ?");
+            ps.setLong(1, person.getId());
+            int affectedRecords = ps.executeUpdate();
+            System.out.println("Affected records with delete: " + affectedRecords);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
