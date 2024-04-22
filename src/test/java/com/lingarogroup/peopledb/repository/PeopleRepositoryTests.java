@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,11 +66,16 @@ public class PeopleRepositoryTests {
     }
 
     @Test
-    public void canFindPersonById() throws SQLException {
-        connection.setAutoCommit(true);
+    public void canFindPersonById() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedPerson = repo.save(john);
-        Person foundPerson = repo.findById(savedPerson.getId());
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
         assertThat(foundPerson).isEqualTo(savedPerson);
+    }
+
+    @Test
+    public void  testPersonIdNotFound() {
+        Optional<Person> person = repo.findById(-1L);
+        assertThat(person).isEmpty();
     }
 }
