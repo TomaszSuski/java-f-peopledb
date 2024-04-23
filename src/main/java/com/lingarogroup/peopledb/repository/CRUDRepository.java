@@ -11,28 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public abstract class CRUDRepository<T extends Entity> {
     protected Connection connection;
 
     public CRUDRepository(Connection connection) {
         this.connection = connection;
-    }
-
-    private String getSaveSqlByAnnotation() {
-        return Arrays.stream(this.getClass().getDeclaredMethods())
-                .filter(method -> "mapForSave".equals(method.getName()))
-                .map(method -> method.getAnnotation(SQL.class))
-                .map(SQL::value)
-                .findFirst().orElse(getSaveSql());
-    }
-
-    private String getUpdateSqlByAnnotation() {
-        return Arrays.stream(this.getClass().getDeclaredMethods())
-                .filter(method -> "mapForUpdate".equals(method.getName()))
-                .map(method -> method.getAnnotation(SQL.class))
-                .map(SQL::value)
-                .findFirst().orElse(getUpdateSql());
     }
 
     /**
@@ -50,7 +35,7 @@ public abstract class CRUDRepository<T extends Entity> {
     public T save(T entity) throws UnableToSaveException {
         try {
             // prepare statement to avoid SQL injection, it has the ability to return auto-generated keys
-            PreparedStatement ps = connection.prepareStatement(getSaveSqlByAnnotation(), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation("mapForSave", this::getSaveSql), Statement.RETURN_GENERATED_KEYS);
             mapForSave(entity, ps);
             int rowsAffected = ps.executeUpdate();
             // getGeneratedKeys returns the result set containing the auto-generated keys
@@ -133,7 +118,7 @@ public abstract class CRUDRepository<T extends Entity> {
      */
      public void update(T entity) throws UnableToSaveException {
         try {
-            PreparedStatement ps = connection.prepareStatement(getUpdateSqlByAnnotation());
+            PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation("mapForUpdate", this::getUpdateSql));
             mapForUpdate(entity, ps);
             int rowsAffected = ps.executeUpdate();
             System.out.printf("Rows affected: %d%n", rowsAffected);
@@ -207,6 +192,23 @@ public abstract class CRUDRepository<T extends Entity> {
             throw new UnableToLoadException("Unable to count entities");
         }
         return count;
+    }
+
+    /**
+     * This method is used to retrieve the SQL query associated with a specific method in the class.
+     * It does this by looking for a method with the given name and retrieving the value of its SQL annotation.
+     * If no such method is found, or if the method does not have a SQL annotation, it uses the provided Supplier to get a default SQL query.
+     *
+     * @param methodName The name of the method whose SQL annotation value should be retrieved.
+     * @param sqlGetter A Supplier that provides a default SQL query if the method does not exist or does not have a SQL annotation.
+     * @return The SQL query associated with the method, or the default SQL query if the method does not exist or does not have a SQL annotation.
+     */
+    private String getSqlByAnnotation(String methodName, Supplier<String> sqlGetter) {
+        return Arrays.stream(this.getClass().getDeclaredMethods())
+                .filter(method -> methodName.equals(method.getName()))
+                .map(method -> method.getAnnotation(SQL.class))
+                .map(SQL::value)
+                .findFirst().orElseGet(sqlGetter);
     }
 
     /**
