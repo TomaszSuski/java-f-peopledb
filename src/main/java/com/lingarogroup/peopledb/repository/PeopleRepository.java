@@ -1,15 +1,11 @@
 package com.lingarogroup.peopledb.repository;
 
-import com.lingarogroup.peopledb.exception.UnableToLoadException;
-import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Person;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
 
 public class PeopleRepository extends CRUDRepository<Person> {
 
@@ -55,6 +51,11 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
+    String getCountSql() {
+        return COUNT_ALL_SQL;
+    }
+
+    @Override
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
@@ -81,22 +82,6 @@ public class PeopleRepository extends CRUDRepository<Person> {
         BigDecimal salary = rs.getBigDecimal(SALARY);
         return new Person(personId, firstName, lastName, dateOFBirth, salary);
     }
-
-    public long count() {
-        long count = 0;
-        try {
-            PreparedStatement ps = connection.prepareStatement(COUNT_ALL_SQL);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                count = rs.getLong("COUNT");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new UnableToLoadException("Unable to count people");
-        }
-        return count;
-    }
-
 
     private static Timestamp convertDobToTimestamp(ZonedDateTime dateOfBirth) {
         return Timestamp.valueOf(dateOfBirth.withZoneSameInstant(ZoneId.of("+0")).toLocalDateTime());
