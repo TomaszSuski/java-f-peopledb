@@ -50,6 +50,11 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
+    String getDeleteSql() {
+        return DELETE_PERSON_SQL;
+    }
+
+    @Override
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
@@ -92,54 +97,6 @@ public class PeopleRepository extends CRUDRepository<Person> {
         return count;
     }
 
-    public void delete(Person person) {
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(DELETE_PERSON_SQL);
-            ps.setLong(1, person.getId());
-            int affectedRecords = ps.executeUpdate();
-            System.out.println("Affected records with delete: " + affectedRecords);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void delete(Person... people) {
-        // the quick and easy way to delete multiple people
-//        for (Person person : people) {
-//            delete(person);
-//        }
-
-        // but for learning db purposes we can use batch processing
-        // it's more efficient to use batch processing for multiple deletes
-        // because it sends multiple queries in one go
-        try {
-            PreparedStatement ps = connection.prepareStatement(DELETE_PERSON_SQL);
-            for (Person person : people) {
-                ps.setLong(1, person.getId());
-                ps.addBatch();
-            }
-            int[] affectedRecords = ps.executeBatch();
-            System.out.println("Affected records with delete: " + affectedRecords.length);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        // another example, now using createStatement
-        // using one statement for multiple deletes with multiple ids
-        // BUT it's not recommended to use this approach because of SQL injection
-//        String ids = Arrays.stream(people)
-//                .map(Person::getId)
-//                .map(String::valueOf)
-//                .reduce((s1, s2) -> s1 + "," + s2).orElse("");
-//        try {
-//            Statement statement = connection.createStatement();
-//            int affectedRecords = statement.executeUpdate("DELETE FROM PEOPLE WHERE ID IN (:ids)".replace(":ids", ids));// :ids is a named parameter
-//            System.out.println("Affected records with delete: " + affectedRecords);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-    }
 
     private static Timestamp convertDobToTimestamp(ZonedDateTime dateOfBirth) {
         return Timestamp.valueOf(dateOfBirth.withZoneSameInstant(ZoneId.of("+0")).toLocalDateTime());

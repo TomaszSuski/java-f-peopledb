@@ -84,6 +84,33 @@ public abstract class CRUDRepository<T extends Entity> {
     }
 }
 
+    public void delete(T entity) {
+    try {
+        PreparedStatement ps = connection.prepareStatement(getDeleteSql());
+        ps.setLong(1, entity.getId());
+        int affectedRecords = ps.executeUpdate();
+        System.out.println("Affected records with delete: " + affectedRecords);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+public void delete(T... entities) {
+    try {
+        PreparedStatement ps = connection.prepareStatement(getDeleteSql());
+        for (T entity : entities) {
+            ps.setLong(1, entity.getId());
+            ps.addBatch();
+        }
+        int[] affectedRecords = ps.executeBatch();
+        System.out.println("Affected records with delete: " + affectedRecords.length);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+abstract String getDeleteSql();
+
 abstract void mapForUpdate(T entity, PreparedStatement ps) throws SQLException;
 abstract String getUpdateSql();
 
