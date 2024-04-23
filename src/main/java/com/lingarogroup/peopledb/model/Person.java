@@ -5,7 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
-public class Person {
+public class Person implements Entity {
     private Long id;
     private String firstName;
     private String lastName;
@@ -27,6 +27,7 @@ public class Person {
         this.salary = salary;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
@@ -47,6 +48,7 @@ public class Person {
         return salary;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

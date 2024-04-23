@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class PeopleRepository {
+public class PeopleRepository extends CRUDRepository<Person> {
 
     public static final String ID = "ID";
     public static final String FIRST_NAME = "FIRST_NAME";
@@ -24,60 +24,38 @@ public class PeopleRepository {
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
     public static final String UPDATE_PERSON_SQL = "UPDATE PEOPLE SET FIRST_NAME = ?, LAST_NAME = ?, DOB = ?, SALARY = ? WHERE ID = ?";
-    private final Connection connection;
 
     public PeopleRepository(Connection connection) {
-
-        this.connection = connection;
+        super(connection);
     }
 
-    public Person save(Person person) throws UnableToSaveException {
-        // Save the person to the database
-        // one of possibilities to create sql statement
-//        String sql = String.format("INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES ('%s', '%s', %s)", person.getFirstname(), person.getLastName(), person.getDateOfBirth());
-        // another approach with question marks as in constant INSERT_PERSON_SQL
-        // the prepared statement is used to avoid SQL injection
-        try {
-            // prepare statement to avoid SQL injection, it has the ability to return auto-generated keys
-            PreparedStatement ps = connection.prepareStatement(INSERT_PERSON_SQL, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, person.getFirstName());
-            ps.setString(2, person.getLastName());
-            // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
-            ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
-            // executeUpdate returns the number of rows affected
-            int rowsAffected = ps.executeUpdate();
-            // getGeneratedKeys returns the result set containing the auto-generated keys
-            ResultSet rs = ps.getGeneratedKeys();
-            // to retrieve the auto-generated key we need to iterate over the result set
-            while (rs.next()) {
-                // getLong(1) returns the value of the first column
-                // there is also version with column name
-                long id = rs.getLong(1);
-                person.setId(id);
-                System.out.println(person);
-            }
-            System.out.printf("Rows affected: %d%n", rowsAffected);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new UnableToSaveException("Unable to save person: " + person);
-        }
-        return person;
+    @Override
+    public String getSaveSql() {
+        return INSERT_PERSON_SQL;
     }
 
-    public Optional<Person> findById(Long id) {
-        Person person = null;
-        try {
-            PreparedStatement ps = connection.prepareStatement(FIND_BY_ID_SQL);
-            ps.setLong(1, id);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                person =  extractPersonFromResultSet(rs);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new UnableToLoadException("Unable to find person with id: " + id);
-        }
-        return Optional.ofNullable(person);
+    @Override
+    void mapForSave(Person person, PreparedStatement ps) throws SQLException {
+        ps.setString(1, person.getFirstName());
+        ps.setString(2, person.getLastName());
+        // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
+        ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
+    }
+
+    @Override
+    Person extractEntityFromResultSet(ResultSet rs) throws SQLException {
+        long personId = rs.getLong(ID);
+        String firstName = rs.getString(FIRST_NAME);
+        String lastName = rs.getString(LAST_NAME);
+        Timestamp dob = rs.getTimestamp(DOB);
+        ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
+        BigDecimal salary = rs.getBigDecimal(SALARY);
+        return new Person(personId, firstName, lastName, dateOFBirth, salary);
+    }
+
+    @Override
+    String getFindByIdSql() {
+        return FIND_BY_ID_SQL;
     }
 
     public List<Person> findAll() {
