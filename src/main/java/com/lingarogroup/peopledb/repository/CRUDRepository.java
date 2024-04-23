@@ -6,6 +6,8 @@ import com.lingarogroup.peopledb.model.Entity;
 import com.lingarogroup.peopledb.model.Person;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class CRUDRepository<T extends Entity> {
@@ -39,7 +41,7 @@ public abstract class CRUDRepository<T extends Entity> {
         return entity;
     }
 
-    public Optional<T> findById(Long id) {
+    public Optional<T> findById(Long id) throws UnableToLoadException {
         T entity = null;
         try {
             PreparedStatement ps = connection.prepareStatement(getFindByIdSql());
@@ -55,9 +57,40 @@ public abstract class CRUDRepository<T extends Entity> {
         return Optional.ofNullable(entity);
     }
 
-    // existing code...
+    public List<T> findAll() throws UnableToLoadException {
+        List<T> entities = new ArrayList<>();
+        try {
+            PreparedStatement ps = connection.prepareStatement(getFindAllSql());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                T entity = extractEntityFromResultSet(rs);
+                entities.add(entity);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UnableToLoadException("Unable to find entities");
+        }
+        return entities;
+    }
+
+ public void update(T entity) {
+    try {
+        PreparedStatement ps = connection.prepareStatement(getUpdateSql());
+        mapForUpdate(entity, ps);
+        int rowsAffected = ps.executeUpdate();
+        System.out.printf("Rows affected: %d%n", rowsAffected);
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+abstract void mapForUpdate(T entity, PreparedStatement ps) throws SQLException;
+abstract String getUpdateSql();
+
+    abstract String getFindAllSql();
 
     abstract T extractEntityFromResultSet(ResultSet rs) throws SQLException;
+
     abstract String getFindByIdSql();
 
     abstract void mapForSave(T entity, PreparedStatement ps) throws SQLException;

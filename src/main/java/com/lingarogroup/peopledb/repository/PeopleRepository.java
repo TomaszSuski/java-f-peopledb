@@ -35,11 +35,35 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
+    String getFindByIdSql() {
+        return FIND_BY_ID_SQL;
+    }
+
+    @Override
+    String getFindAllSql() {
+        return FIND_ALL_SQL;
+    }
+
+    @Override
+    String getUpdateSql() {
+        return UPDATE_PERSON_SQL;
+    }
+
+    @Override
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
         // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
+    }
+
+    @Override
+    void mapForUpdate(Person person, PreparedStatement ps) throws SQLException {
+        ps.setString(1, person.getFirstName());
+        ps.setString(2, person.getLastName());
+        ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
+        ps.setBigDecimal(4, person.getSalary());
+        ps.setLong(5, person.getId());
     }
 
     @Override
@@ -51,27 +75,6 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
         BigDecimal salary = rs.getBigDecimal(SALARY);
         return new Person(personId, firstName, lastName, dateOFBirth, salary);
-    }
-
-    @Override
-    String getFindByIdSql() {
-        return FIND_BY_ID_SQL;
-    }
-
-    public List<Person> findAll() {
-        List<Person> people = new java.util.ArrayList<>();
-        try {
-            PreparedStatement ps = connection.prepareStatement(FIND_ALL_SQL);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Person person = extractPersonFromResultSet(rs);
-                people.add(person);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new UnableToLoadException("Unable to find people");
-        }
-        return people;
     }
 
     public long count() {
@@ -136,33 +139,6 @@ public class PeopleRepository extends CRUDRepository<Person> {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-    }
-
-    public void update(Person person) {
-        // update the person in the database
-        // one of possibilities to create sql statement
-        try {
-            PreparedStatement ps = connection.prepareStatement(UPDATE_PERSON_SQL);
-            ps.setString(1, person.getFirstName());
-            ps.setString(2, person.getLastName());
-            ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
-            ps.setBigDecimal(4, person.getSalary());
-            ps.setLong(5, person.getId());
-            int rowsAffected = ps.executeUpdate();
-            System.out.printf("Rows affected: %d%n", rowsAffected);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Person extractPersonFromResultSet(ResultSet rs) throws SQLException {
-        long personId = rs.getLong(ID);
-        String firstName = rs.getString(FIRST_NAME);
-        String lastName = rs.getString(LAST_NAME);
-        Timestamp dob = rs.getTimestamp(DOB);
-        ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
-        BigDecimal salary = rs.getBigDecimal(SALARY);
-        return new Person(personId, firstName, lastName, dateOFBirth, salary);
     }
 
     private static Timestamp convertDobToTimestamp(ZonedDateTime dateOfBirth) {
