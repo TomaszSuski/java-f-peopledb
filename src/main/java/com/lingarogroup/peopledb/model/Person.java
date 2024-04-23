@@ -1,23 +1,38 @@
 package com.lingarogroup.peopledb.model;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class Person {
-    private final String firstname;
-    private final String lastName;
-    private final ZonedDateTime dateOfBirth;
     private Long id;
+    private String firstName;
+    private String lastName;
+    private ZonedDateTime dateOfBirth;
+    private BigDecimal salary = BigDecimal.ZERO;
 
     public Person(String firstname, String lastName, ZonedDateTime dateOfBirth) {
-        this.firstname = firstname;
+        this.firstName = firstname;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public Person(long personId, String firstName, String lastName, ZonedDateTime dateOFBirth) {
+        this(firstName, lastName, dateOFBirth); // calling the constructor with 3 parameters
+        this.id = personId;
+    }
+    public Person(long personId, String firstName, String lastName, ZonedDateTime dateOFBirth, BigDecimal salary) {
+        this(personId, firstName, lastName, dateOFBirth);   // calling the constructor with 4 parameters
+        this.salary = salary;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
     }
 
     public String getLastName() {
@@ -28,18 +43,34 @@ public class Person {
         return dateOfBirth;
     }
 
-    public Long getId() {
-        return id;
+    public BigDecimal getSalary() {
+        return salary;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setDateOfBirth(ZonedDateTime dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setSalary(BigDecimal salary) {
+        this.salary = salary;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
-                "firstname='" + firstname + '\'' +
+                "firstname='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", id=" + id +
@@ -51,7 +82,7 @@ public class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(firstname, person.firstname)
+        return Objects.equals(firstName, person.firstName)
                 && Objects.equals(lastName, person.lastName)
                 && Objects.equals(dateOfBirth.withZoneSameInstant(ZoneId.of("+0")), person.dateOfBirth.withZoneSameInstant(ZoneId.of("+0")))
                 && Objects.equals(id, person.id);
@@ -59,6 +90,6 @@ public class Person {
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstname, lastName, dateOfBirth, id);
+        return Objects.hash(firstName, lastName, dateOfBirth, id);
     }
 }

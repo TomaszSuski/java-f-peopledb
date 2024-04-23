@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -27,7 +28,10 @@ public class PeopleRepositoryTests {
             String version = resultSet.getString("VERSION");
             System.out.println("H2 Database Version: " + version);
         }
-        String sql = "CREATE TABLE IF NOT EXISTS PEOPLE (ID BIGINT AUTO_INCREMENT PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), DOB TIMESTAMP, SALARY DECIMAL(10, 2)); SELECT * FROM PEOPLE;";
+//        String dropTable = "DROP TABLE IF EXISTS PEOPLE";
+//        PreparedStatement ps2 = connection.prepareStatement(dropTable);
+//        ps2.executeUpdate();
+        String sql = "CREATE TABLE IF NOT EXISTS PEOPLE (ID BIGINT AUTO_INCREMENT PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), DOB TIMESTAMP, SALARY NUMERIC(10, 2));";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.executeUpdate();
 
@@ -41,7 +45,7 @@ public class PeopleRepositoryTests {
     void setUp() throws SQLException {
         connection = DriverManager.getConnection("jdbc:h2:~/projects/JAVA/course/peopledb".replace("~", System.getProperty("user.home")));
         connection.setAutoCommit(false);    // setting auto commit to false to avoid real data changes in the database
-        checkH2Version(connection);
+//        checkH2Version(connection);
         repo = new PeopleRepository(connection);
     }
 
@@ -71,6 +75,7 @@ public class PeopleRepositoryTests {
     public void canFindPersonById() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedPerson = repo.save(john);
+        System.out.println(savedPerson);
         Person foundPerson = repo.findById(savedPerson.getId()).get();
         assertThat(foundPerson).isEqualTo(savedPerson);
     }
@@ -124,6 +129,7 @@ public class PeopleRepositoryTests {
         repo.delete(savedJohn, savedJane);
     }
 
+    // separate code for check how to do some functionality
 //    @Test
 //    public void experiment() {
 //        Person p1 = new Person(null, null, null);
@@ -145,4 +151,14 @@ public class PeopleRepositoryTests {
 //                .reduce((s1, s2) -> s1 + "," + s2).orElse("");
 //        System.out.println(ids);
 //    }
+
+    @Test
+    public void canUpdatePerson() {
+        Person savedPerson = repo.save(new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6"))));
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
+        foundPerson.setSalary(new BigDecimal("73000.44"));
+        repo.update(foundPerson);
+        Person updatedPerson = repo.findById(savedPerson.getId()).get();
+        assertThat(updatedPerson.getSalary()).isEqualByComparingTo("73000.44");
+    }
 }
