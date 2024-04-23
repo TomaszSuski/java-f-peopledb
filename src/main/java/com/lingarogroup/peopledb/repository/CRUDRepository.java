@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.exception.UnableToDeleteException;
 import com.lingarogroup.peopledb.exception.UnableToLoadException;
 import com.lingarogroup.peopledb.exception.UnableToSaveException;
@@ -7,6 +8,7 @@ import com.lingarogroup.peopledb.model.Entity;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +17,22 @@ public abstract class CRUDRepository<T extends Entity> {
 
     public CRUDRepository(Connection connection) {
         this.connection = connection;
+    }
+
+    private String getSaveSqlByAnnotation() {
+        return Arrays.stream(this.getClass().getDeclaredMethods())
+                .filter(method -> "mapForSave".equals(method.getName()))
+                .map(method -> method.getAnnotation(SQL.class))
+                .map(SQL::value)
+                .findFirst().orElse(getSaveSql());
+    }
+
+    private String getUpdateSqlByAnnotation() {
+        return Arrays.stream(this.getClass().getDeclaredMethods())
+                .filter(method -> "mapForUpdate".equals(method.getName()))
+                .map(method -> method.getAnnotation(SQL.class))
+                .map(SQL::value)
+                .findFirst().orElse(getUpdateSql());
     }
 
     /**
@@ -32,7 +50,7 @@ public abstract class CRUDRepository<T extends Entity> {
     public T save(T entity) throws UnableToSaveException {
         try {
             // prepare statement to avoid SQL injection, it has the ability to return auto-generated keys
-            PreparedStatement ps = connection.prepareStatement(getSaveSql(), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(getSaveSqlByAnnotation(), Statement.RETURN_GENERATED_KEYS);
             mapForSave(entity, ps);
             int rowsAffected = ps.executeUpdate();
             // getGeneratedKeys returns the result set containing the auto-generated keys
@@ -115,7 +133,7 @@ public abstract class CRUDRepository<T extends Entity> {
      */
      public void update(T entity) throws UnableToSaveException {
         try {
-            PreparedStatement ps = connection.prepareStatement(getUpdateSql());
+            PreparedStatement ps = connection.prepareStatement(getUpdateSqlByAnnotation());
             mapForUpdate(entity, ps);
             int rowsAffected = ps.executeUpdate();
             System.out.printf("Rows affected: %d%n", rowsAffected);
@@ -223,7 +241,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for updating an entity.
      */
-    abstract String getUpdateSql();
+    String getUpdateSql() {return "";}
 
     /**
      * This method should return a SQL statement for retrieving all entities.
@@ -257,7 +275,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for saving an entity.
      */
-    abstract String getSaveSql();
+    String getSaveSql() {return "";};
 
     /**
      * This method is used to extract an entity from the ResultSet object.

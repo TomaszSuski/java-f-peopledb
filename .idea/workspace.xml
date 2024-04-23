@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/exception/UnableToDeleteException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/annotation/SQL.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
@@ -46,6 +46,7 @@
         <option value="JUnit5 Test Class" />
         <option value="Interface" />
         <option value="Class" />
+        <option value="AnnotationType" />
       </list>
     </option>
   </component>
@@ -81,7 +82,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "custom__annotations__reflections__api",
     "kotlin-language-version-configured": "true",
     "last_directory_selection": "/home/tomasz_suski/projects/JAVA/course/PeopleDB/src/main/java/com/lingarogroup/peopledb/repository",
     "last_opened_file_path": "/home/tomasz_suski/Downloads/packageSearch-233.11799.196.zip",
@@ -93,6 +94,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.lingarogroup.peopledb.annotation" />
       <recent name="com.lingarogroup.peopledb.model" />
       <recent name="com.lingarogroup.peopledb.repository" />
     </key>

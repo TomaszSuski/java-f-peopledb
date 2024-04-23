@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.model.Person;
 
 import java.math.BigDecimal;
@@ -25,10 +26,10 @@ public class PeopleRepository extends CRUDRepository<Person> {
         super(connection);
     }
 
-    @Override
-    public String getSaveSql() {
-        return INSERT_PERSON_SQL;
-    }
+//    @Override
+//    public String getSaveSql() {
+//        return INSERT_PERSON_SQL;
+//    }
 
     @Override
     String getFindByIdSql() {
@@ -40,10 +41,10 @@ public class PeopleRepository extends CRUDRepository<Person> {
         return FIND_ALL_SQL;
     }
 
-    @Override
-    String getUpdateSql() {
-        return UPDATE_PERSON_SQL;
-    }
+//    @Override
+//    String getUpdateSql() {
+//        return UPDATE_PERSON_SQL;
+//    }
 
     @Override
     String getDeleteSql() {
@@ -56,6 +57,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
+    @SQL(INSERT_PERSON_SQL)
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
@@ -64,6 +66,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
+    @SQL(UPDATE_PERSON_SQL)
     void mapForUpdate(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
