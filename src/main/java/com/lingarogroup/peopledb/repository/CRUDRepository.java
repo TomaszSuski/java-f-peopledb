@@ -5,7 +5,6 @@ import com.lingarogroup.peopledb.exception.*;
 import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.annotation.SQLContainer;
-import com.lingarogroup.peopledb.model.Entity;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public abstract class CRUDRepository<T extends Entity> {
+public abstract class CRUDRepository<T> {
     protected Connection connection;
 
     public CRUDRepository(Connection connection) {
@@ -47,7 +46,7 @@ public abstract class CRUDRepository<T extends Entity> {
                 // getLong(1) returns the value of the first column
                 // there is also version with column name
                 long id = rs.getLong(1);
-                entity.setId(id);
+                setIdByAnnotation(entity, id);
                 System.out.println(entity);
             }
             System.out.printf("Rows affected: %d%n", rowsAffected);
@@ -141,7 +140,7 @@ public abstract class CRUDRepository<T extends Entity> {
     public void delete(T entity) throws UnableToDeleteException {
         try {
             PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.DELETE, this::getDeleteSql));
-            ps.setLong(1, findIdByAnnotation(entity));
+            ps.setLong(1, getIdByAnnotation(entity));
             int affectedRecords = ps.executeUpdate();
             System.out.println("Affected records with delete: " + affectedRecords);
         } catch (SQLException e) {
@@ -162,7 +161,7 @@ public abstract class CRUDRepository<T extends Entity> {
         try {
             PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.DELETE, this::getDeleteSql));
             for (T entity : entities) {
-                ps.setLong(1, findIdByAnnotation(entity));
+                ps.setLong(1, getIdByAnnotation(entity));
                 ps.addBatch();
             }
             int[] affectedRecords = ps.executeBatch();
@@ -239,7 +238,7 @@ public abstract class CRUDRepository<T extends Entity> {
      * @return The ID of the entity.
      * @throws NoIdFoundException If no field is found that is annotated with the Id annotation.
      */
-    private Long findIdByAnnotation(T entity) {
+    protected Long getIdByAnnotation(T entity) {
         return Arrays.stream(entity.getClass().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Id.class))
                 .map(field -> {
@@ -254,6 +253,28 @@ public abstract class CRUDRepository<T extends Entity> {
                 })
                 .findFirst()
                 .orElseThrow(() -> new NoIdFoundException("No ID annotated field found in entity: " + entity));
+    }
+
+    /**
+     * This method is used to set the ID of an entity by looking for a field that is annotated with the Id annotation.
+     * It uses reflection to get all declared fields of the entity's class and filters out fields that do not have the Id annotation.
+     * It then tries to set the value of the annotated field, which should be the ID of the entity.
+     * If an IllegalAccessException occurs, it prints the stack trace.
+     *
+     * @param entity The entity whose ID should be set.
+     * @param id The ID to be set.
+     */
+    protected void setIdByAnnotation(T entity, Long id) {
+        Arrays.stream(entity.getClass().getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Id.class))
+                .forEach(field -> {
+                    field.setAccessible(true);
+                    try {
+                        field.set(entity, id);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
        /**

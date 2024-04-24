@@ -79,7 +79,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ps.setString(2, person.getLastName());
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
         ps.setBigDecimal(4, person.getSalary());
-        ps.setLong(5, person.getId());
+        ps.setLong(5, getIdByAnnotation(person));
     }
 
     /**
