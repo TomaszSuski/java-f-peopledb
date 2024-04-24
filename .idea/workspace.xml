@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/annotation/SQLContainer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/exception/NoSqlException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/annotation/SQL.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/annotation/SQL.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/annotation/SQLContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/annotation/SQLContainer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

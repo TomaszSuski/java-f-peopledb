@@ -1,4 +1,4 @@
-package com.lingarogroup.peopledb.annotation;
+package com.lingarogroup.peopledb.model;
 
 public enum CrudOperation {
     SAVE,

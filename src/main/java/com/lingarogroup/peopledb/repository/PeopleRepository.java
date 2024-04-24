@@ -1,6 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
-import com.lingarogroup.peopledb.annotation.CrudOperation;
+import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.model.Person;
 
@@ -47,6 +47,14 @@ public class PeopleRepository extends CRUDRepository<Person> {
 //        return COUNT_ALL_SQL;
 //    }
 
+        /**
+     * This method is used to map the properties of a Person object to a PreparedStatement for saving the Person in the database.
+     * The SQL query for this operation is provided by the SQL annotation.
+     *
+     * @param person The Person object whose properties should be mapped to the PreparedStatement.
+     * @param ps The PreparedStatement to which the properties of the Person object should be mapped.
+     * @throws SQLException If an SQL error occurs.
+     */
     @Override
     @SQL(value = INSERT_PERSON_SQL, operationType = CrudOperation.SAVE)
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
@@ -56,6 +64,14 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
     }
 
+    /**
+     * This method is used to map the properties of a Person object to a PreparedStatement for updating the Person in the database.
+     * The SQL query for this operation is provided by the SQL annotation.
+     *
+     * @param person The Person object whose properties should be mapped to the PreparedStatement.
+     * @param ps The PreparedStatement to which the properties of the Person object should be mapped.
+     * @throws SQLException If an SQL error occurs.
+     */
     @Override
     @SQL(value = UPDATE_PERSON_SQL, operationType = CrudOperation.UPDATE)
     void mapForUpdate(Person person, PreparedStatement ps) throws SQLException {
@@ -66,6 +82,14 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ps.setLong(5, person.getId());
     }
 
+    /**
+     * This method is used to extract a Person object from a ResultSet.
+     * The SQL queries for finding by ID, finding all, counting, and deleting are provided by the SQL annotations.
+     *
+     * @param rs The ResultSet from which the Person object should be extracted.
+     * @return The extracted Person object.
+     * @throws SQLException If an SQL error occurs.
+     */
     @Override
     @SQL(value = FIND_BY_ID_SQL, operationType = CrudOperation.FIND_BY_ID)
     @SQL(value = FIND_ALL_SQL, operationType = CrudOperation.FIND_ALL)
@@ -81,6 +105,13 @@ public class PeopleRepository extends CRUDRepository<Person> {
         return new Person(personId, firstName, lastName, dateOFBirth, salary);
     }
 
+    /**
+     * This method is used to convert a ZonedDateTime to a Timestamp.
+     * The ZonedDateTime is standardised to UTC to ensure that the same value is stored in the database regardless of the timezone.
+     *
+     * @param dateOfBirth The ZonedDateTime to be converted to a Timestamp.
+     * @return The converted Timestamp.
+     */
     private static Timestamp convertDobToTimestamp(ZonedDateTime dateOfBirth) {
         return Timestamp.valueOf(dateOfBirth.withZoneSameInstant(ZoneId.of("+0")).toLocalDateTime());
     }

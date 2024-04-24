@@ -1,6 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
-import com.lingarogroup.peopledb.annotation.CrudOperation;
+import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.annotation.SQLContainer;
 import com.lingarogroup.peopledb.exception.NoSqlException;
@@ -199,7 +199,7 @@ public abstract class CRUDRepository<T extends Entity> {
     }
 
     /**
-     * This method is used to retrieve the SQL query associated with a specific CRUD operation in the class.
+     * Retrieves the SQL query associated with a specific CRUD operation in the class.
      * It does this by looking for a method with the given CRUD operation type and retrieving the value of its SQL annotation.
      * If no such method is found, or if the method does not have a SQL annotation, it uses the provided Supplier to get a default SQL query.
      *
@@ -231,11 +231,12 @@ public abstract class CRUDRepository<T extends Entity> {
                 .findFirst().orElseGet(sqlGetter);
     }
 
-    /**
+       /**
      * This method should return a SQL statement for counting the total number of entities in the database.
      * The returned SQL statement should not require any parameters.
      *
      * @return A SQL statement for counting the total number of entities in the database.
+     * @throws NoSqlException If no SQL statement is provided.
      */
     protected String getCountSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
@@ -244,6 +245,7 @@ public abstract class CRUDRepository<T extends Entity> {
      * The returned SQL statement should have exactly one parameter which is the ID of the entity.
      *
      * @return A SQL statement for deleting an entity.
+     * @throws NoSqlException If no SQL statement is provided.
      */
     protected String getDeleteSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
@@ -252,6 +254,7 @@ public abstract class CRUDRepository<T extends Entity> {
      * The returned SQL statement should have parameters that correspond to the entity's fields.
      *
      * @return A SQL statement for updating an entity.
+     * @throws NoSqlException If no SQL statement is provided.
      */
     protected String getUpdateSql() throws NoSqlException {throw new NoSqlException("No SQL provided");}
 
@@ -260,6 +263,7 @@ public abstract class CRUDRepository<T extends Entity> {
      * The returned SQL statement should not require any parameters.
      *
      * @return A SQL statement for retrieving all entities.
+     * @throws NoSqlException If no SQL statement is provided.
      */
     protected String getFindAllSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
@@ -268,6 +272,7 @@ public abstract class CRUDRepository<T extends Entity> {
      * The returned SQL statement must contain exactly one parameter which is the ID of the entity.
      *
      * @return A SQL statement for finding an entity by its ID.
+     * @throws NoSqlException If no SQL statement is provided.
      */
     protected String getFindByIdSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
@@ -276,8 +281,9 @@ public abstract class CRUDRepository<T extends Entity> {
      * The returned SQL statement should have parameters that correspond to the entity's fields.
      *
      * @return A SQL statement for saving an entity.
+     * @throws NoSqlException If no SQL statement is provided.
      */
-   protected String getSaveSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
+    protected String getSaveSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
     /**
      * This method is used to map the entity's fields to the PreparedStatement's parameters for the save operation.
