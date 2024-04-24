@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.annotation.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.model.Person;
 
@@ -26,38 +27,28 @@ public class PeopleRepository extends CRUDRepository<Person> {
         super(connection);
     }
 
-//    @Override
-//    public String getSaveSql() {
-//        return INSERT_PERSON_SQL;
-//    }
-
     @Override
-    String getFindByIdSql() {
+    protected String getFindByIdSql() {
         return FIND_BY_ID_SQL;
     }
 
     @Override
-    String getFindAllSql() {
+    protected String getFindAllSql() {
         return FIND_ALL_SQL;
     }
 
-//    @Override
-//    String getUpdateSql() {
-//        return UPDATE_PERSON_SQL;
-//    }
-
     @Override
-    String getDeleteSql() {
+    protected String getDeleteSql() {
         return DELETE_PERSON_SQL;
     }
 
     @Override
-    String getCountSql() {
+    protected String getCountSql() {
         return COUNT_ALL_SQL;
     }
 
     @Override
-    @SQL(INSERT_PERSON_SQL)
+    @SQL(value = INSERT_PERSON_SQL, operationType = CrudOperation.SAVE)
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
@@ -66,7 +57,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
-    @SQL(UPDATE_PERSON_SQL)
+    @SQL(value = UPDATE_PERSON_SQL, operationType = CrudOperation.UPDATE)
     void mapForUpdate(Person person, PreparedStatement ps) throws SQLException {
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
