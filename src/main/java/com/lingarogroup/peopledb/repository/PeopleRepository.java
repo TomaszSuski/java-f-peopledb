@@ -27,25 +27,25 @@ public class PeopleRepository extends CRUDRepository<Person> {
         super(connection);
     }
 
-    @Override
-    protected String getFindByIdSql() {
-        return FIND_BY_ID_SQL;
-    }
+//    @Override
+//    protected String getFindByIdSql() {
+//        return FIND_BY_ID_SQL;
+//    }
 
-    @Override
-    protected String getFindAllSql() {
-        return FIND_ALL_SQL;
-    }
-
-    @Override
-    protected String getDeleteSql() {
-        return DELETE_PERSON_SQL;
-    }
-
-    @Override
-    protected String getCountSql() {
-        return COUNT_ALL_SQL;
-    }
+//    @Override
+//    protected String getFindAllSql() {
+//        return FIND_ALL_SQL;
+//    }
+//
+//    @Override
+//    protected String getDeleteSql() {
+//        return DELETE_PERSON_SQL;
+//    }
+//
+//    @Override
+//    protected String getCountSql() {
+//        return COUNT_ALL_SQL;
+//    }
 
     @Override
     @SQL(value = INSERT_PERSON_SQL, operationType = CrudOperation.SAVE)
@@ -67,6 +67,10 @@ public class PeopleRepository extends CRUDRepository<Person> {
     }
 
     @Override
+    @SQL(value = FIND_BY_ID_SQL, operationType = CrudOperation.FIND_BY_ID)
+    @SQL(value = FIND_ALL_SQL, operationType = CrudOperation.FIND_ALL)
+    @SQL(value = COUNT_ALL_SQL, operationType = CrudOperation.COUNT)
+    @SQL(value = DELETE_PERSON_SQL, operationType = CrudOperation.DELETE)
     Person extractEntityFromResultSet(ResultSet rs) throws SQLException {
         long personId = rs.getLong(ID);
         String firstName = rs.getString(FIRST_NAME);

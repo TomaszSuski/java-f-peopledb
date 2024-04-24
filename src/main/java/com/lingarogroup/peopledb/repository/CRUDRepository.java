@@ -2,6 +2,8 @@ package com.lingarogroup.peopledb.repository;
 
 import com.lingarogroup.peopledb.annotation.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
+import com.lingarogroup.peopledb.annotation.SQLContainer;
+import com.lingarogroup.peopledb.exception.NoSqlException;
 import com.lingarogroup.peopledb.exception.UnableToDeleteException;
 import com.lingarogroup.peopledb.exception.UnableToLoadException;
 import com.lingarogroup.peopledb.exception.UnableToSaveException;
@@ -13,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public abstract class CRUDRepository<T extends Entity> {
     protected Connection connection;
@@ -213,9 +216,16 @@ public abstract class CRUDRepository<T extends Entity> {
      * 6. It tries to get the first SQL query from the stream. If no SQL query is found, it uses the provided Supplier to get a default SQL query.
      */
     private String getSqlByAnnotation(CrudOperation operationType, Supplier<String> sqlGetter) {
-        return Arrays.stream(this.getClass().getDeclaredMethods())
+        Stream<SQL> multiSqlStream = Arrays.stream(this.getClass().getDeclaredMethods())
+                .filter(method -> method.isAnnotationPresent(SQLContainer.class))
+                .map(m -> m.getAnnotation(SQLContainer.class))
+                .flatMap(sqlContainer -> Arrays.stream(sqlContainer.value()));
+
+        Stream<SQL> singleSqlStream = Arrays.stream(this.getClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(SQL.class))
-                .map(method -> method.getAnnotation(SQL.class))
+                .map(method -> method.getAnnotation(SQL.class));
+
+        return Stream.concat(multiSqlStream, singleSqlStream)
                 .filter(sql -> sql.operationType().equals(operationType))
                 .map(SQL::value)
                 .findFirst().orElseGet(sqlGetter);
@@ -227,7 +237,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for counting the total number of entities in the database.
      */
-    protected String getCountSql() {return "";};
+    protected String getCountSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
     /**
      * This method should return a SQL statement for deleting an entity.
@@ -235,7 +245,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for deleting an entity.
      */
-    protected String getDeleteSql() {return "";};
+    protected String getDeleteSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
     /**
      * This method should return a SQL statement for updating an entity.
@@ -243,7 +253,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for updating an entity.
      */
-    protected String getUpdateSql() {return "";}
+    protected String getUpdateSql() throws NoSqlException {throw new NoSqlException("No SQL provided");}
 
     /**
      * This method should return a SQL statement for retrieving all entities.
@@ -251,7 +261,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for retrieving all entities.
      */
-    protected String getFindAllSql() {return "";};
+    protected String getFindAllSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
     /**
      * This method should return a SQL statement for finding an entity by its ID.
@@ -259,7 +269,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for finding an entity by its ID.
      */
-    protected String getFindByIdSql() {return "";};
+    protected String getFindByIdSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
     /**
      * This method should return a SQL statement for saving an entity.
@@ -267,7 +277,7 @@ public abstract class CRUDRepository<T extends Entity> {
      *
      * @return A SQL statement for saving an entity.
      */
-   protected String getSaveSql() {return "";};
+   protected String getSaveSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
 
     /**
      * This method is used to map the entity's fields to the PreparedStatement's parameters for the save operation.
