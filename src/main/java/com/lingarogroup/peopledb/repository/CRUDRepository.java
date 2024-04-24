@@ -1,12 +1,10 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.annotation.Id;
+import com.lingarogroup.peopledb.exception.*;
 import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.annotation.SQLContainer;
-import com.lingarogroup.peopledb.exception.NoSqlException;
-import com.lingarogroup.peopledb.exception.UnableToDeleteException;
-import com.lingarogroup.peopledb.exception.UnableToLoadException;
-import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Entity;
 
 import java.sql.*;
@@ -143,7 +141,7 @@ public abstract class CRUDRepository<T extends Entity> {
     public void delete(T entity) throws UnableToDeleteException {
         try {
             PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.DELETE, this::getDeleteSql));
-            ps.setLong(1, entity.getId());
+            ps.setLong(1, findIdByAnnotation(entity));
             int affectedRecords = ps.executeUpdate();
             System.out.println("Affected records with delete: " + affectedRecords);
         } catch (SQLException e) {
@@ -164,7 +162,7 @@ public abstract class CRUDRepository<T extends Entity> {
         try {
             PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.DELETE, this::getDeleteSql));
             for (T entity : entities) {
-                ps.setLong(1, entity.getId());
+                ps.setLong(1, findIdByAnnotation(entity));
                 ps.addBatch();
             }
             int[] affectedRecords = ps.executeBatch();
@@ -229,6 +227,33 @@ public abstract class CRUDRepository<T extends Entity> {
                 .filter(sql -> sql.operationType().equals(operationType))
                 .map(SQL::value)
                 .findFirst().orElseGet(sqlGetter);
+    }
+
+    /**
+     * This method is used to find the ID of an entity by looking for a field that is annotated with the Id annotation.
+     * It uses reflection to get all declared fields of the entity's class and filters out fields that do not have the Id annotation.
+     * It then tries to get the value of the annotated field, which should be the ID of the entity.
+     * If no such field is found, a NoIdFoundException is thrown.
+     *
+     * @param entity The entity whose ID should be found.
+     * @return The ID of the entity.
+     * @throws NoIdFoundException If no field is found that is annotated with the Id annotation.
+     */
+    private Long findIdByAnnotation(T entity) {
+        return Arrays.stream(entity.getClass().getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Id.class))
+                .map(field -> {
+                    field.setAccessible(true);
+                    Long id = null;
+                    try {
+                        id = (Long) field.get(entity);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    return id;
+                })
+                .findFirst()
+                .orElseThrow(() -> new NoIdFoundException("No ID annotated field found in entity: " + entity));
     }
 
        /**

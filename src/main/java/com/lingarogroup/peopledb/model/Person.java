@@ -1,12 +1,16 @@
 package com.lingarogroup.peopledb.model;
 
+import com.lingarogroup.peopledb.annotation.Id;
+
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class Person implements Entity {
+    @Id
     private Long id;
+
     private String firstName;
     private String lastName;
     private ZonedDateTime dateOfBirth;
