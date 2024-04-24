@@ -16,7 +16,11 @@ public class PeopleRepository extends CRUDRepository<Person> {
     public static final String LAST_NAME = "LAST_NAME";
     public static final String DOB = "DOB";
     public static final String SALARY = "SALARY";
-    public static final String INSERT_PERSON_SQL = "INSERT INTO PEOPLE (FIRST_NAME, LAST_NAME, DOB) VALUES(?, ?, ?)";
+    public static final String INSERT_PERSON_SQL = """
+        INSERT INTO PEOPLE
+        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL)
+        VALUES(?, ?, ?, ?, ?)
+        """;
     public static final String FIND_BY_ID_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB, SALARY FROM PEOPLE WHERE ID = ?";
     public static final String FIND_ALL_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB, SALARY FROM PEOPLE";
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
@@ -27,27 +31,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
         super(connection);
     }
 
-//    @Override
-//    protected String getFindByIdSql() {
-//        return FIND_BY_ID_SQL;
-//    }
-
-//    @Override
-//    protected String getFindAllSql() {
-//        return FIND_ALL_SQL;
-//    }
-//
-//    @Override
-//    protected String getDeleteSql() {
-//        return DELETE_PERSON_SQL;
-//    }
-//
-//    @Override
-//    protected String getCountSql() {
-//        return COUNT_ALL_SQL;
-//    }
-
-        /**
+    /**
      * This method is used to map the properties of a Person object to a PreparedStatement for saving the Person in the database.
      * The SQL query for this operation is provided by the SQL annotation.
      *
@@ -62,6 +46,8 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ps.setString(2, person.getLastName());
         // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
+        ps.setBigDecimal(4, person.getSalary());
+        ps.setString(5, person.getEmail());
     }
 
     /**

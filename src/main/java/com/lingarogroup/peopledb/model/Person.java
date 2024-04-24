@@ -15,6 +15,7 @@ public class Person {
     private String lastName;
     private ZonedDateTime dateOfBirth;
     private BigDecimal salary = BigDecimal.ZERO;
+    private String email;
 
     public Person(String firstname, String lastName, ZonedDateTime dateOfBirth) {
         this.firstName = firstname;
@@ -49,6 +50,14 @@ public class Person {
 
     public BigDecimal getSalary() {
         return salary;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setId(Long id) {

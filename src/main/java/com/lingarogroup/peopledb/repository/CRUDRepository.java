@@ -47,9 +47,9 @@ public abstract class CRUDRepository<T> {
                 // there is also version with column name
                 long id = rs.getLong(1);
                 setIdByAnnotation(entity, id);
-                System.out.println(entity);
+//                System.out.println(entity);
             }
-            System.out.printf("Rows affected: %d%n", rowsAffected);
+//            System.out.printf("Rows affected: %d%n", rowsAffected);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new UnableToSaveException("Unable to save person: " + entity);

@@ -5,12 +5,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,9 +38,12 @@ public class PeopleRepositoryTests {
 //        String dropTable = "DROP TABLE IF EXISTS PEOPLE";
 //        PreparedStatement ps2 = connection.prepareStatement(dropTable);
 //        ps2.executeUpdate();
-        String sql = "CREATE TABLE IF NOT EXISTS PEOPLE (ID BIGINT AUTO_INCREMENT PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), DOB TIMESTAMP, SALARY NUMERIC(10, 2));";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.executeUpdate();
+//        String sql = """
+//        CREATE TABLE IF NOT EXISTS PEOPLE (ID BIGINT AUTO_INCREMENT PRIMARY KEY, FIRST_NAME VARCHAR(255), LAST_NAME VARCHAR(255), DOB TIMESTAMP, SALARY NUMERIC(10, 2));
+//        ALTER TABLE PEOPLE ADD COLUMN EMAIL VARCHAR(255);
+//        """;
+//        PreparedStatement ps = connection.prepareStatement(sql);
+//        ps.executeUpdate();
 
     } catch (SQLException e) {
         e.printStackTrace();
@@ -159,5 +170,49 @@ public class PeopleRepositoryTests {
         repo.update(foundPerson);
         Person updatedPerson = repo.findById(savedPerson.getId()).get();
         assertThat(updatedPerson.getSalary()).isEqualByComparingTo("73000.44");
+    }
+
+    @Test
+    public void loadData() throws IOException {
+
+        List<String> columns = Files.lines(Path.of("/home/tomasz_suski/projects/JAVA/course/Employees/data/Hr5m.csv"))
+                .limit(1)
+                .map(str -> str.toLowerCase())
+                .map(line -> line.split(","))
+                .flatMap(Arrays::stream)
+                .toList();
+
+        int salaryIndex = columns.indexOf(("salary"));
+        int firstNameIndex = columns.indexOf("first name");
+        int lastNameIndex = columns.indexOf("last name");
+        int dobIndex = columns.indexOf("date of birth");
+        int tobIndex = columns.indexOf("time of birth");
+        int emailIndex = columns.indexOf("e mail");
+
+        Files.lines(Path.of("/home/tomasz_suski/projects/JAVA/course/Employees/data/Hr5m.csv"))
+//                .parallel()
+                .skip(1)
+                .limit(100)
+                .map(line -> line.split(","))
+                .map(createPerson(firstNameIndex, lastNameIndex, dobIndex, tobIndex, salaryIndex, emailIndex))
+                .forEach(repo::save);
+
+    }
+
+    private Function<String[], Person> createPerson(int firstNameIndex, int lastNameIndex, int dobIndex, int tobIndex, int salaryIndex, int emailIndex) {
+        return line -> {
+            Person person = new Person(line[firstNameIndex], line[lastNameIndex], getZonedDateTimeForPerson(line[dobIndex], line[tobIndex]));
+            person.setSalary(new BigDecimal(line[salaryIndex]));
+            person.setEmail(line[emailIndex]);
+            return person;
+        };
+    }
+
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+    private ZonedDateTime getZonedDateTimeForPerson(String dob, String tob) {
+        LocalDate date = LocalDate.parse(dob, dateFormatter);
+        LocalTime time = LocalTime.parse(tob, timeFormatter);
+        return ZonedDateTime.of(date, time, ZoneId.of("+0"));
     }
 }
