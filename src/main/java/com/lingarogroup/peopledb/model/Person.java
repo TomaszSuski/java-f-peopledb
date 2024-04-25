@@ -16,6 +16,7 @@ public class Person {
     private ZonedDateTime dateOfBirth;
     private BigDecimal salary = BigDecimal.ZERO;
     private String email;
+    private Address homeAddress;
 
     public Person(String firstname, String lastName, ZonedDateTime dateOfBirth) {
         this.firstName = firstname;
@@ -104,5 +105,13 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(firstName, lastName, dateOfBirth, id);
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public Address getHomeAddress() {
+        return homeAddress;
     }
 }

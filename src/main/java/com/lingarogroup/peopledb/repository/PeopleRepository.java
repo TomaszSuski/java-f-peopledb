@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.model.Person;
@@ -10,6 +11,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class PeopleRepository extends CRUDRepository<Person> {
+    // The AddressRepository is used to save the home address of a Person object.
+    // but it's a tight coupling, we should use a service to handle the address
+    private AddressRepository addressRepository;
 
     public static final String ID = "ID";
     public static final String FIRST_NAME = "FIRST_NAME";
@@ -18,8 +22,8 @@ public class PeopleRepository extends CRUDRepository<Person> {
     public static final String SALARY = "SALARY";
     public static final String INSERT_PERSON_SQL = """
         INSERT INTO PEOPLE
-        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL)
-        VALUES(?, ?, ?, ?, ?)
+        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS)
+        VALUES(?, ?, ?, ?, ?, ?)
         """;
     public static final String FIND_BY_ID_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB, SALARY FROM PEOPLE WHERE ID = ?";
     public static final String FIND_ALL_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB, SALARY FROM PEOPLE";
@@ -29,6 +33,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
 
     public PeopleRepository(Connection connection) {
         super(connection);
+        addressRepository = new AddressRepository(connection);
     }
 
     /**
@@ -42,12 +47,14 @@ public class PeopleRepository extends CRUDRepository<Person> {
     @Override
     @SQL(value = INSERT_PERSON_SQL, operationType = CrudOperation.SAVE)
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
+        Address savedAdress = addressRepository.save(person.getHomeAddress());
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
         // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
         ps.setBigDecimal(4, person.getSalary());
         ps.setString(5, person.getEmail());
+        ps.setLong(6, savedAdress.getId());
     }
 
     /**

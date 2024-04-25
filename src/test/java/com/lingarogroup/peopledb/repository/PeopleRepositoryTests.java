@@ -1,6 +1,8 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.Person;
+import com.lingarogroup.peopledb.model.Region;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,6 +84,16 @@ public class PeopleRepositoryTests {
     }
 
     @Test
+    public void canSavePersonWithAddress() {
+        Person john = new Person("JohnZZZZ", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Address address = new Address("123 Main St", "APT. 1A", "Anytown", "TX", "12345", "United States", "Foulton County", Region.WEST);
+        john.setHomeAddress(address);
+
+        Person savedPerson = repo.save(john);
+        assertThat(savedPerson.getHomeAddress().getId()).isGreaterThan(0);
+    }
+
+    @Test
     public void canFindPersonById() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedPerson = repo.save(john);
@@ -139,6 +151,18 @@ public class PeopleRepositoryTests {
         repo.delete(savedJohn, savedJane);
     }
 
+    @Test
+    public void canUpdatePerson() {
+        Person savedPerson = repo.save(new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6"))));
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
+        foundPerson.setSalary(new BigDecimal("73000.44"));
+        repo.update(foundPerson);
+        Person updatedPerson = repo.findById(savedPerson.getId()).get();
+        assertThat(updatedPerson.getSalary()).isEqualByComparingTo("73000.44");
+    }
+
+
+
     // separate code for check how to do some functionality
 //    @Test
 //    public void experiment() {
@@ -161,16 +185,6 @@ public class PeopleRepositoryTests {
 //                .reduce((s1, s2) -> s1 + "," + s2).orElse("");
 //        System.out.println(ids);
 //    }
-
-    @Test
-    public void canUpdatePerson() {
-        Person savedPerson = repo.save(new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6"))));
-        Person foundPerson = repo.findById(savedPerson.getId()).get();
-        foundPerson.setSalary(new BigDecimal("73000.44"));
-        repo.update(foundPerson);
-        Person updatedPerson = repo.findById(savedPerson.getId()).get();
-        assertThat(updatedPerson.getSalary()).isEqualByComparingTo("73000.44");
-    }
 
 
     // separate code for loading data from csv file to db

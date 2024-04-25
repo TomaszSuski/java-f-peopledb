@@ -264,7 +264,7 @@ public abstract class CRUDRepository<T> {
      * @param entity The entity whose ID should be set.
      * @param id The ID to be set.
      */
-    protected void setIdByAnnotation(T entity, Long id) {
+    protected void setIdByAnnotation(T entity, Long id) throws UnableToSaveException {
         Arrays.stream(entity.getClass().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Id.class))
                 .forEach(field -> {
@@ -272,7 +272,7 @@ public abstract class CRUDRepository<T> {
                     try {
                         field.set(entity, id);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        throw new UnableToSaveException("Unable to set ID for entity: " + entity);
                     }
                 });
     }
