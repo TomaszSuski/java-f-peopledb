@@ -172,47 +172,50 @@ public class PeopleRepositoryTests {
         assertThat(updatedPerson.getSalary()).isEqualByComparingTo("73000.44");
     }
 
-    @Test
-    public void loadData() throws IOException {
 
-        List<String> columns = Files.lines(Path.of("/home/tomasz_suski/projects/JAVA/course/Employees/data/Hr5m.csv"))
-                .limit(1)
-                .map(str -> str.toLowerCase())
-                .map(line -> line.split(","))
-                .flatMap(Arrays::stream)
-                .toList();
+    // separate code for loading data from csv file to db
 
-        int salaryIndex = columns.indexOf(("salary"));
-        int firstNameIndex = columns.indexOf("first name");
-        int lastNameIndex = columns.indexOf("last name");
-        int dobIndex = columns.indexOf("date of birth");
-        int tobIndex = columns.indexOf("time of birth");
-        int emailIndex = columns.indexOf("e mail");
-
-        Files.lines(Path.of("/home/tomasz_suski/projects/JAVA/course/Employees/data/Hr5m.csv"))
-//                .parallel()
-                .skip(1)
-                .limit(100)
-                .map(line -> line.split(","))
-                .map(createPerson(firstNameIndex, lastNameIndex, dobIndex, tobIndex, salaryIndex, emailIndex))
-                .forEach(repo::save);
-
-    }
-
-    private Function<String[], Person> createPerson(int firstNameIndex, int lastNameIndex, int dobIndex, int tobIndex, int salaryIndex, int emailIndex) {
-        return line -> {
-            Person person = new Person(line[firstNameIndex], line[lastNameIndex], getZonedDateTimeForPerson(line[dobIndex], line[tobIndex]));
-            person.setSalary(new BigDecimal(line[salaryIndex]));
-            person.setEmail(line[emailIndex]);
-            return person;
-        };
-    }
-
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
-    private ZonedDateTime getZonedDateTimeForPerson(String dob, String tob) {
-        LocalDate date = LocalDate.parse(dob, dateFormatter);
-        LocalTime time = LocalTime.parse(tob, timeFormatter);
-        return ZonedDateTime.of(date, time, ZoneId.of("+0"));
-    }
+//    @Test
+//    public void loadData() throws IOException, SQLException {
+//
+//        List<String> columns = Files.lines(Path.of("/home/tomasz_suski/projects/JAVA/course/Employees/data/Hr5m.csv"))
+//                .limit(1)
+//                .map(str -> str.toLowerCase())
+//                .map(line -> line.split(","))
+//                .flatMap(Arrays::stream)
+//                .toList();
+//
+//        int salaryIndex = columns.indexOf(("salary"));
+//        int firstNameIndex = columns.indexOf("first name");
+//        int lastNameIndex = columns.indexOf("last name");
+//        int dobIndex = columns.indexOf("date of birth");
+//        int tobIndex = columns.indexOf("time of birth");
+//        int emailIndex = columns.indexOf("e mail");
+//
+//        Files.lines(Path.of("/home/tomasz_suski/projects/JAVA/course/Employees/data/Hr5m.csv"))
+////                .parallel() // that won't work in here
+//                .skip(1)
+////                .limit(100)   // for testing purposes, for real data it was commented out
+//                .map(line -> line.split(","))
+//                .map(createPerson(firstNameIndex, lastNameIndex, dobIndex, tobIndex, salaryIndex, emailIndex))
+//                .forEach(repo::save);
+//        connection.commit();
+//    }
+//
+//    private Function<String[], Person> createPerson(int firstNameIndex, int lastNameIndex, int dobIndex, int tobIndex, int salaryIndex, int emailIndex) {
+//        return line -> {
+//            Person person = new Person(line[firstNameIndex], line[lastNameIndex], getZonedDateTimeForPerson(line[dobIndex], line[tobIndex]));
+//            person.setSalary(new BigDecimal(line[salaryIndex]));
+//            person.setEmail(line[emailIndex]);
+//            return person;
+//        };
+//    }
+//
+//    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy");
+//    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+//    private ZonedDateTime getZonedDateTimeForPerson(String dob, String tob) {
+//        LocalDate date = LocalDate.parse(dob, dateFormatter);
+//        LocalTime time = LocalTime.parse(tob, timeFormatter);
+//        return ZonedDateTime.of(date, time, ZoneId.of("+0"));
+//    }
 }

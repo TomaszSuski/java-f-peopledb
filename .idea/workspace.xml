@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -198,7 +195,7 @@
             <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.loadData&quot;" />
           </list>
         </option>
-        <option name="vmOptions" />
+        <option name="vmOptions" value="-Xms4096m -Xmx4096m" />
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
@@ -230,6 +227,13 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Gradle.PeopleRepositoryTests" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonById" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canUpdatePerson" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.loadData" />
+      <item itemvalue="Gradle.PersonTest" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.PeopleRepositoryTests.loadData" />
