@@ -3,6 +3,7 @@ package com.lingarogroup.peopledb.repository;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
+import com.lingarogroup.peopledb.model.Region;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +13,16 @@ import java.sql.SQLException;
 public class AddressRepository extends CRUDRepository<Address> {
 
     public static final String SAVE_ADDRESS_SQL = "INSERT INTO ADDRESSES (STREET_ADDRESS, ADDRESS2, CITY, STATE, POSTCODE, COUNTRY, COUNTY, REGION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static final String FIND_BY_ID_SQL = "SELECT * FROM ADDRESSES WHERE ID = ?";
+    public static final String ID = "ID";
+    public static final String STREET_ADDRESS = "STREET_ADDRESS";
+    public static final String ADDRESS_2 = "ADDRESS2";
+    public static final String CITY = "CITY";
+    public static final String STATE = "STATE";
+    public static final String POSTCODE = "POSTCODE";
+    public static final String COUNTRY = "COUNTRY";
+    public static final String COUNTY = "COUNTY";
+    public static final String REGION = "REGION";
 
     public AddressRepository(Connection connection) {
         super(connection);
@@ -36,7 +47,17 @@ public class AddressRepository extends CRUDRepository<Address> {
     }
 
     @Override
+    @SQL(operationType = CrudOperation.FIND_BY_ID, value = FIND_BY_ID_SQL)
     Address extractEntityFromResultSet(ResultSet rs) throws SQLException {
-        return null;
+        long id = rs.getLong(ID);
+        String streetAddress = rs.getString(STREET_ADDRESS);
+        String address2 = rs.getString(ADDRESS_2);
+        String city = rs.getString(CITY);
+        String state = rs.getString(STATE);
+        String postcode = rs.getString(POSTCODE);
+        String country = rs.getString(COUNTRY);
+        String county = rs.getString(COUNTY);
+        Region region = Region.valueOf(rs.getString(REGION).toUpperCase());
+        return new Address(id, streetAddress, address2, city, state, postcode, country, county, region);
     }
 }

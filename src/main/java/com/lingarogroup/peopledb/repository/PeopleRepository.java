@@ -21,13 +21,15 @@ public class PeopleRepository extends CRUDRepository<Person> {
     public static final String LAST_NAME = "LAST_NAME";
     public static final String DOB = "DOB";
     public static final String SALARY = "SALARY";
+    public static final String HOME_ADDRESS = "HOME_ADDRESS";
+
     public static final String INSERT_PERSON_SQL = """
         INSERT INTO PEOPLE
         (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS)
         VALUES(?, ?, ?, ?, ?, ?)
         """;
-    public static final String FIND_BY_ID_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB, SALARY FROM PEOPLE WHERE ID = ?";
-    public static final String FIND_ALL_SQL = "SELECT ID, FIRST_NAME, LAST_NAME, DOB, SALARY FROM PEOPLE";
+    public static final String FIND_BY_ID_SQL = "SELECT * FROM PEOPLE WHERE ID = ?";
+    public static final String FIND_ALL_SQL = "SELECT * FROM PEOPLE";
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
     public static final String UPDATE_PERSON_SQL = "UPDATE PEOPLE SET FIRST_NAME = ?, LAST_NAME = ?, DOB = ?, SALARY = ? WHERE ID = ?";
@@ -118,7 +120,11 @@ public class PeopleRepository extends CRUDRepository<Person> {
         Timestamp dob = rs.getTimestamp(DOB);
         ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
         BigDecimal salary = rs.getBigDecimal(SALARY);
-        return new Person(personId, firstName, lastName, dateOFBirth, salary);
+        long homeAddressId = rs.getLong(HOME_ADDRESS);
+        Address homeAddress = addressRepository.findById(homeAddressId).orElse(null);
+        Person person = new Person(personId, firstName, lastName, dateOFBirth, salary);
+        person.setHomeAddress(homeAddress);
+        return person;
     }
 
     /**
