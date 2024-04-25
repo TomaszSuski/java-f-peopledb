@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Address.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Region.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/AddressRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
     </list>
@@ -114,7 +110,7 @@
       <recent name="com.lingarogroup.peopledb.model" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.PeopleRepositoryTests.canSavePersonWithAddress">
+  <component name="RunManager" selected="Gradle.PeopleRepositoryTests">
     <configuration name="PeopleRepositoryTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -139,6 +135,30 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="PeopleRepositoryTests.canSavePerson" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePerson&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
     <configuration name="PeopleRepositoryTests.canSavePersonWithAddress" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -153,30 +173,6 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePersonWithAddress&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="PeopleRepositoryTests.canUpdatePerson" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canUpdatePerson&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -236,19 +232,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Gradle.PeopleRepositoryTests.canSavePerson" />
       <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
       <item itemvalue="Gradle.PeopleRepositoryTests" />
-      <item itemvalue="Gradle.PeopleRepositoryTests.canUpdatePerson" />
       <item itemvalue="Gradle.PeopleRepositoryTests.loadData" />
       <item itemvalue="Gradle.PersonTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.PeopleRepositoryTests" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePerson" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
         <item itemvalue="Gradle.PeopleRepositoryTests.loadData" />
-        <item itemvalue="Gradle.PeopleRepositoryTests" />
         <item itemvalue="Gradle.PersonTest" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canUpdatePerson" />
       </list>
     </recent_temporary>
   </component>

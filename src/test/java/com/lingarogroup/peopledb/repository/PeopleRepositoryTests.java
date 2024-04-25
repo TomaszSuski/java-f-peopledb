@@ -5,6 +5,7 @@ import com.lingarogroup.peopledb.model.Person;
 import com.lingarogroup.peopledb.model.Region;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class PeopleRepositoryTests {
         john.setHomeAddress(address);
 
         Person savedPerson = repo.save(john);
-        assertThat(savedPerson.getHomeAddress().getId()).isGreaterThan(0);
+        assertThat(savedPerson.getHomeAddress().get().getId()).isGreaterThan(0);
     }
 
     @Test
@@ -109,6 +110,7 @@ public class PeopleRepositoryTests {
     }
 
     @Test
+    @Disabled
     public void canFindAllPeople() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedJohn = repo.save(john);

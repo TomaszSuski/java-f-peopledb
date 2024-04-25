@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
@@ -47,14 +48,36 @@ public class PeopleRepository extends CRUDRepository<Person> {
     @Override
     @SQL(value = INSERT_PERSON_SQL, operationType = CrudOperation.SAVE)
     void mapForSave(Person person, PreparedStatement ps) throws SQLException {
-        Address savedAdress = addressRepository.save(person.getHomeAddress());
         ps.setString(1, person.getFirstName());
         ps.setString(2, person.getLastName());
         // we need to convert ZonedDateTime to LocalDateTime and then to Timestamp, standardising it to UTC to have the same value in the database
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
         ps.setBigDecimal(4, person.getSalary());
         ps.setString(5, person.getEmail());
-        ps.setLong(6, savedAdress.getId());
+        person.getHomeAddress().ifPresentOrElse(address -> {
+            try {
+                Address savedAddress = addressRepository.save(address);
+                ps.setLong(6, savedAddress.getId());
+            } catch (SQLException e) {
+                throw new UnableToSaveException("Unable to save address");
+            }
+        }, () -> {
+            try {
+                ps.setNull(6, Types.BIGINT);
+            } catch (SQLException e) {
+                throw new UnableToSaveException("Unable to save null address");
+            }
+        });
+        // explicit null check
+//        if (person.getHomeAddress() != null) {
+//            savedAdress = addressRepository.save(person.getHomeAddress());
+//            ps.setLong(6, savedAdress.getId());
+//        } else {
+//            ps.setNull(6, Types.BIGINT);
+//        }
+
+        // using optional to avoid explicit null check
+
     }
 
     /**
