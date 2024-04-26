@@ -5,6 +5,7 @@ import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.annotation.SQL;
 import com.lingarogroup.peopledb.model.Person;
+import com.lingarogroup.peopledb.model.Region;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -28,7 +29,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
         (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS)
         VALUES(?, ?, ?, ?, ?, ?)
         """;
-    public static final String FIND_BY_ID_SQL = "SELECT * FROM PEOPLE WHERE ID = ?";
+    public static final String FIND_BY_ID_SQL = "SELECT * FROM PEOPLE p LEFT OUTER JOIN ADDRESSES a ON p.HOME_ADDRESS = a.ID WHERE p.ID = ?";
     public static final String FIND_ALL_SQL = "SELECT * FROM PEOPLE";
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
@@ -121,10 +122,23 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
         BigDecimal salary = rs.getBigDecimal(SALARY);
         long homeAddressId = rs.getLong(HOME_ADDRESS);
-        Address homeAddress = addressRepository.findById(homeAddressId).orElse(null);
+        Address homeAddress = extractAddress(rs);
         Person person = new Person(personId, firstName, lastName, dateOFBirth, salary);
         person.setHomeAddress(homeAddress);
         return person;
+    }
+
+    private static Address extractAddress(ResultSet rs) throws SQLException {
+        long id = rs.getLong(ID);
+        String streetAddress = rs.getString(AddressRepository.STREET_ADDRESS);
+        String address2 = rs.getString(AddressRepository.ADDRESS_2);
+        String city = rs.getString(AddressRepository.CITY);
+        String state = rs.getString(AddressRepository.STATE);
+        String postcode = rs.getString(AddressRepository.POSTCODE);
+        String country = rs.getString(AddressRepository.COUNTRY);
+        String county = rs.getString(AddressRepository.COUNTY);
+        Region region = Region.valueOf(rs.getString(AddressRepository.REGION).toUpperCase());
+        return new Address(id, streetAddress, address2, city, state, postcode, country, county, region);
     }
 
     /**
