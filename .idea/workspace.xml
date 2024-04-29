@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,6 +75,7 @@
     "Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSavePerson.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSavePersonWithAddress.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSaveTwoPeople.executor": "Run",
     "Gradle.PeopleRepositoryTests.canUpdatePerson.executor": "Run",
     "Gradle.PeopleRepositoryTests.executor": "Run",
@@ -109,7 +112,7 @@
       <recent name="com.lingarogroup.peopledb.model" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.PeopleRepositoryTests.canSavePersonWithAddress">
+  <component name="RunManager" selected="Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress">
     <configuration name="PeopleRepositoryTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -206,7 +209,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.loadData" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canSavePersonWithSecondaryAddress" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -219,10 +222,10 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.loadData&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePersonWithSecondaryAddress&quot;" />
           </list>
         </option>
-        <option name="vmOptions" value="-Xms4096m -Xmx4096m" />
+        <option name="vmOptions" />
       </ExternalSystemSettings>
       <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
@@ -231,19 +234,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress" />
       <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress" />
       <item itemvalue="Gradle.PeopleRepositoryTests.canSavePerson" />
       <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
       <item itemvalue="Gradle.PeopleRepositoryTests" />
-      <item itemvalue="Gradle.PeopleRepositoryTests.loadData" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress" />
         <item itemvalue="Gradle.PeopleRepositoryTests" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canSavePerson" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.loadData" />
       </list>
     </recent_temporary>
   </component>

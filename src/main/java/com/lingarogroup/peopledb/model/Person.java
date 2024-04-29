@@ -18,6 +18,7 @@ public class Person {
     private BigDecimal salary = BigDecimal.ZERO;
     private String email;
     private Optional<Address> homeAddress = Optional.empty();
+    private Optional<Address> secondaryAddress = Optional.empty();
 
     public Person(String firstname, String lastName, ZonedDateTime dateOfBirth) {
         this.firstName = firstname;
@@ -114,5 +115,13 @@ public class Person {
 
     public Optional<Address> getHomeAddress() {
         return homeAddress;
+    }
+
+    public void setSecondaryAddress(Address secondaryAddress) {
+        this.secondaryAddress = Optional.ofNullable(secondaryAddress);
+    }
+
+    public Optional<Address> getSecondaryAddress() {
+        return secondaryAddress;
     }
 }

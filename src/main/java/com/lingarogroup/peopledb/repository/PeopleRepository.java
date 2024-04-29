@@ -26,10 +26,16 @@ public class PeopleRepository extends CRUDRepository<Person> {
 
     public static final String INSERT_PERSON_SQL = """
         INSERT INTO PEOPLE
-        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS)
-        VALUES(?, ?, ?, ?, ?, ?)
+        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS, SECONDARY_ADDRESS)
+        VALUES(?, ?, ?, ?, ?, ?, ?)
         """;
-    public static final String FIND_BY_ID_SQL = "SELECT * FROM PEOPLE p LEFT OUTER JOIN ADDRESSES a ON p.HOME_ADDRESS = a.ID WHERE p.ID = ?";
+    public static final String FIND_BY_ID_SQL = """
+        SELECT
+         a.ID as A_ID, p.*, a.*
+         FROM PEOPLE p
+         LEFT OUTER JOIN ADDRESSES a ON p.HOME_ADDRESS = a.ID
+         WHERE p.ID = ?
+        """;
     public static final String FIND_ALL_SQL = "SELECT * FROM PEOPLE";
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
@@ -57,20 +63,18 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
         ps.setBigDecimal(4, person.getSalary());
         ps.setString(5, person.getEmail());
-        person.getHomeAddress().ifPresentOrElse(address -> {
-            try {
-                Address savedAddress = addressRepository.save(address);
-                ps.setLong(6, savedAddress.getId());
-            } catch (SQLException e) {
-                throw new UnableToSaveException("Unable to save address");
-            }
-        }, () -> {
-            try {
-                ps.setNull(6, Types.BIGINT);
-            } catch (SQLException e) {
-                throw new UnableToSaveException("Unable to save null address");
-            }
-        });
+        person.getHomeAddress().ifPresentOrElse(
+                address ->
+                        saveAddress(ps, 6, address, "Unable to save Home Address"),
+                () ->
+                        saveNullAddress(ps, 6, "Unable to save null address")
+        );
+        person.getSecondaryAddress().ifPresentOrElse(
+                address ->
+                        saveAddress(ps, 7, address, "Unable to save Secondary Address"),
+                () ->
+                        saveNullAddress(ps, 7, "Unable to save null secondary address")
+        );
         // explicit null check
 //        if (person.getHomeAddress() != null) {
 //            savedAdress = addressRepository.save(person.getHomeAddress());
@@ -121,15 +125,18 @@ public class PeopleRepository extends CRUDRepository<Person> {
         Timestamp dob = rs.getTimestamp(DOB);
         ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
         BigDecimal salary = rs.getBigDecimal(SALARY);
-        long homeAddressId = rs.getLong(HOME_ADDRESS);
+
         Address homeAddress = extractAddress(rs);
+
         Person person = new Person(personId, firstName, lastName, dateOFBirth, salary);
         person.setHomeAddress(homeAddress);
         return person;
     }
 
-    private static Address extractAddress(ResultSet rs) throws SQLException {
-        long id = rs.getLong(ID);
+    private Address extractAddress(ResultSet rs) throws SQLException {
+        String addressId = "A_" + AddressRepository.ID;
+        if (rs.getObject(addressId) == null) return null;
+        long id = rs.getLong(addressId);
         String streetAddress = rs.getString(AddressRepository.STREET_ADDRESS);
         String address2 = rs.getString(AddressRepository.ADDRESS_2);
         String city = rs.getString(AddressRepository.CITY);
@@ -141,6 +148,23 @@ public class PeopleRepository extends CRUDRepository<Person> {
         return new Address(id, streetAddress, address2, city, state, postcode, country, county, region);
     }
 
+    private void saveAddress(PreparedStatement ps, int addressIdColumnIndex, Address address, String exceptionMessage) throws UnableToSaveException {
+            try {
+                Address savedAddress = addressRepository.save(address);
+                ps.setLong(addressIdColumnIndex, savedAddress.getId());
+            } catch (SQLException e) {
+                throw new UnableToSaveException(exceptionMessage);
+            }
+    }
+
+    private void saveNullAddress(PreparedStatement ps, int addressIdColumnIndex, String exceptionMessage) {
+        try {
+            ps.setNull(addressIdColumnIndex, Types.BIGINT);
+        } catch (SQLException e) {
+            throw new UnableToSaveException(exceptionMessage);
+        }
+    }
+
     /**
      * This method is used to convert a ZonedDateTime to a Timestamp.
      * The ZonedDateTime is standardised to UTC to ensure that the same value is stored in the database regardless of the timezone.
@@ -148,7 +172,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
      * @param dateOfBirth The ZonedDateTime to be converted to a Timestamp.
      * @return The converted Timestamp.
      */
-    private static Timestamp convertDobToTimestamp(ZonedDateTime dateOfBirth) {
+    private Timestamp convertDobToTimestamp(ZonedDateTime dateOfBirth) {
         return Timestamp.valueOf(dateOfBirth.withZoneSameInstant(ZoneId.of("+0")).toLocalDateTime());
     }
 }
