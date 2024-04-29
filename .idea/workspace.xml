@@ -73,9 +73,15 @@
     "Gradle.PeopleRepositoryTests.canDeleteMultiple.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonById.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canFindPersonByIdWithSecondaryAddress.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canFindPersonByIdWithSpous.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canFindPersonByIdWithTwoAddresses.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSavePerson.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSavePersonWithAddress.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canSavePersonWithHomeAddress.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canSavePersonWithSpouse.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canSavePersonWithTwoAddresses.executor": "Run",
     "Gradle.PeopleRepositoryTests.canSaveTwoPeople.executor": "Run",
     "Gradle.PeopleRepositoryTests.canUpdatePerson.executor": "Run",
     "Gradle.PeopleRepositoryTests.executor": "Run",
@@ -112,7 +118,7 @@
       <recent name="com.lingarogroup.peopledb.model" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress">
+  <component name="RunManager" selected="Gradle.PeopleRepositoryTests">
     <configuration name="PeopleRepositoryTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -137,7 +143,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.canFindPersonByIdWithAddress" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canFindPersonByIdWithSecondaryAddress" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -150,7 +156,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonByIdWithAddress&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonByIdWithSecondaryAddress&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -161,7 +167,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.canSavePerson" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canFindPersonByIdWithSpous" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -174,7 +180,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePerson&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonByIdWithSpous&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -185,7 +191,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.canSavePersonWithAddress" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canFindPersonByIdWithTwoAddresses" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -198,7 +204,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePersonWithAddress&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonByIdWithTwoAddresses&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -209,7 +215,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.canSavePersonWithSecondaryAddress" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canSavePersonWithSpouse" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -222,7 +228,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePersonWithSecondaryAddress&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canSavePersonWithSpouse&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -234,19 +240,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress" />
-      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress" />
-      <item itemvalue="Gradle.PeopleRepositoryTests.canSavePerson" />
-      <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithSecondaryAddress" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithSpous" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithTwoAddresses" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSpouse" />
       <item itemvalue="Gradle.PeopleRepositoryTests" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSecondaryAddress" />
         <item itemvalue="Gradle.PeopleRepositoryTests" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithAddress" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePerson" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithSpous" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSpouse" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithTwoAddresses" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithSecondaryAddress" />
       </list>
     </recent_temporary>
   </component>

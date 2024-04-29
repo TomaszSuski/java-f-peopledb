@@ -19,6 +19,7 @@ public class Person {
     private String email;
     private Optional<Address> homeAddress = Optional.empty();
     private Optional<Address> secondaryAddress = Optional.empty();
+    private Optional<Person> spouse = Optional.empty();
 
     public Person(String firstname, String lastName, ZonedDateTime dateOfBirth) {
         this.firstName = firstname;
@@ -123,5 +124,13 @@ public class Person {
 
     public Optional<Address> getSecondaryAddress() {
         return secondaryAddress;
+    }
+
+    public void setSpouse(Person spouse) {
+        this.spouse = Optional.ofNullable(spouse);
+    }
+
+    public Optional<Person> getSpouse() {
+        return spouse;
     }
 }

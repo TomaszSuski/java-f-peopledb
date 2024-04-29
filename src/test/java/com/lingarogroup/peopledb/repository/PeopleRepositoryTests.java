@@ -118,6 +118,16 @@ public class PeopleRepositoryTests {
     }
 
     @Test
+    public void canSavePersonWithSpouse() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Person jane = new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6")));
+        Person savedSpouse = repo.save(jane);
+        john.setSpouse(savedSpouse);
+        Person savedPerson = repo.save(john);
+        assertThat(savedPerson.getSpouse().get().getId()).isGreaterThan(0);
+    }
+
+    @Test
     public void canFindPersonById() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedPerson = repo.save(john);
@@ -127,13 +137,47 @@ public class PeopleRepositoryTests {
     }
 
     @Test
-    public void canFindPersonByIdWithAddress() {
+    public void canFindPersonByIdWithHomeAddress() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Address address = new Address("123 Main St", "APT. 1A", "Anytown", "TX", "12345", "United States", "Foulton County", Region.WEST);
         john.setHomeAddress(address);
         Person savedPerson = repo.save(john);
         Person foundPerson = repo.findById(savedPerson.getId()).get();
         assertThat(foundPerson.getHomeAddress().get()).isEqualTo(savedPerson.getHomeAddress().get());
+    }
+
+    @Test
+    public void canFindPersonByIdWithSecondaryAddress() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Address address = new Address("123 Main St", "APT. 1A", "Anytown", "TX", "12345", "United States", "Foulton County", Region.WEST);
+        john.setSecondaryAddress(address);
+        Person savedPerson = repo.save(john);
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
+        assertThat(foundPerson.getSecondaryAddress().get()).isEqualTo(savedPerson.getSecondaryAddress().get());
+    }
+
+    @Test
+    public void canFindPersonByIdWithTwoAddresses() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Address homeAddress = new Address("123 Main St", "APT. 1A", "Anytown", "TX", "12345", "United States", "Foulton County", Region.WEST);
+        john.setHomeAddress(homeAddress);
+        Address secondaryAddress = new Address("456 Elm St", "APT. 2B", "Othertown", "TX", "54321", "United States", "Foulton County", Region.WEST);
+        john.setSecondaryAddress(secondaryAddress);
+        Person savedPerson = repo.save(john);
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
+        assertThat(foundPerson.getHomeAddress().get()).isEqualTo(savedPerson.getHomeAddress().get());
+        assertThat(foundPerson.getSecondaryAddress().get()).isEqualTo(savedPerson.getSecondaryAddress().get());
+    }
+
+    @Test
+    public void canFindPersonByIdWithSpous() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        Person jane = new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6")));
+        Person savedSpouse = repo.save(jane);
+        john.setSpouse(savedSpouse);
+        Person savedPerson = repo.save(john);
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
+        assertThat(foundPerson.getSpouse().get()).isEqualTo(savedPerson.getSpouse().get());
     }
 
     @Test
