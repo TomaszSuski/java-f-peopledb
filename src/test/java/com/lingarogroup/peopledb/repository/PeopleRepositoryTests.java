@@ -128,6 +128,16 @@ public class PeopleRepositoryTests {
     }
 
     @Test
+    public void canSavePersonWithChildren() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        john.addChild(new Person("Tom", "Smith", ZonedDateTime.of(2010, 1, 1, 0, 0, 0, 0, ZoneId.of("-6"))));
+        john.addChild(new Person("Ann", "Smith", ZonedDateTime.of(2015, 6, 15, 12, 0, 0, 0, ZoneId.of("-6"))));
+
+        Person savedPerson = repo.save(john);
+        savedPerson.getChildren().forEach(child -> assertThat(child.getId()).isGreaterThan(0));
+    }
+
+    @Test
     public void canFindPersonById() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedPerson = repo.save(john);
@@ -170,7 +180,7 @@ public class PeopleRepositoryTests {
     }
 
     @Test
-    public void canFindPersonByIdWithSpous() {
+    public void canFindPersonByIdWithSpouse() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person jane = new Person("Jane", "Doe", ZonedDateTime.of(1985, 5, 20, 10, 30, 0, 0, ZoneId.of("-6")));
         Person savedSpouse = repo.save(jane);
@@ -187,7 +197,7 @@ public class PeopleRepositoryTests {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     public void canFindAllPeople() {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         Person savedJohn = repo.save(john);

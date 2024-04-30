@@ -5,8 +5,10 @@ import com.lingarogroup.peopledb.annotation.Id;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public class Person {
     @Id
@@ -20,6 +22,8 @@ public class Person {
     private Optional<Address> homeAddress = Optional.empty();
     private Optional<Address> secondaryAddress = Optional.empty();
     private Optional<Person> spouse = Optional.empty();
+    private Set<Person> children = new HashSet<>();
+    private Optional<Person> parent = Optional.empty();
 
     public Person(String firstname, String lastName, ZonedDateTime dateOfBirth) {
         this.firstName = firstname;
@@ -132,5 +136,22 @@ public class Person {
 
     public Optional<Person> getSpouse() {
         return spouse;
+    }
+
+    public void addChild(Person child) {
+        children.add(child);
+        child.setParent(this);
+    }
+
+    public void setParent(Person parent) {
+        this.parent = Optional.ofNullable(parent);
+    }
+
+    public Optional<Person> getParent() {
+        return parent;
+    }
+
+    public Set<Person> getChildren() {
+        return children;
     }
 }

@@ -1,6 +1,5 @@
 package com.lingarogroup.peopledb.repository;
 
-import com.lingarogroup.peopledb.exception.UnableToLoadException;
 import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
@@ -26,11 +25,14 @@ public class PeopleRepository extends CRUDRepository<Person> {
     public static final String SALARY = "SALARY";
     public static final String HOME_ADDRESS = "HOME_ADDRESS";
     public static final String SECONDARY_ADDRESS = "SECONDARY_ADDRESS";
+    public static final String SPOUSE = "SPOUSE";
+    public static final String EMAIL = "EMAIL";
+    public static final String PARENT_ID = "PARENT_ID";
 
     public static final String INSERT_PERSON_SQL = """
         INSERT INTO PEOPLE
-        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS, SECONDARY_ADDRESS, SPOUSE)
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+        (FIRST_NAME, LAST_NAME, DOB, SALARY, EMAIL, HOME_ADDRESS, SECONDARY_ADDRESS, SPOUSE, PARENT_ID)
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
     //    public static String findByIdSql = String.format("""
 //        SELECT
@@ -54,7 +56,17 @@ public class PeopleRepository extends CRUDRepository<Person> {
              LEFT OUTER JOIN PEOPLE AS spouse ON p.SPOUSE = spouse.ID
              WHERE p.ID = ?
             """;
-    public static final String FIND_ALL_SQL = "SELECT * FROM PEOPLE";
+    public static final String FIND_ALL_SQL = """
+            SELECT
+                p.ID, p.FIRST_NAME, p.LAST_NAME, p.DOB, p.SALARY, p.EMAIL, p.HOME_ADDRESS, p.SECONDARY_ADDRESS, p.SPOUSE,
+                home.ID as HOME_ID, home.STREET_ADDRESS as HOME_STREET_ADDRESS, home.ADDRESS2 as HOME_ADDRESS2, home.CITY as HOME_CITY, home.STATE as HOME_STATE, home.POSTCODE as HOME_POSTCODE, home.COUNTRY as HOME_COUNTRY, home.COUNTY as HOME_COUNTY, home.REGION as HOME_REGION,
+                secondary.ID as SECONDARY_ID, secondary.STREET_ADDRESS as SECONDARY_STREET_ADDRESS, secondary.ADDRESS2 as SECONDARY_ADDRESS2, secondary.CITY as SECONDARY_CITY, secondary.STATE as SECONDARY_STATE, secondary.POSTCODE as SECONDARY_POSTCODE, secondary.COUNTRY as SECONDARY_COUNTRY, secondary.COUNTY as SECONDARY_COUNTY, secondary.REGION as SECONDARY_REGION,
+                spouse.ID as SPOUSE_ID, spouse.FIRST_NAME as SPOUSE_FIRST_NAME, spouse.LAST_NAME as SPOUSE_LAST_NAME, spouse.DOB as SPOUSE_DOB, spouse.SALARY as SPOUSE_SALARY, spouse.EMAIL as SPOUSE_EMAIL, spouse.HOME_ADDRESS as SPOUSE_HOME_ADDRESS, spouse.SECONDARY_ADDRESS as SPOUSE_SECONDARY_ADDRESS, spouse.SPOUSE as SPOUSE_SPOUSE
+             FROM PEOPLE p
+             LEFT OUTER JOIN ADDRESSES AS home ON p.HOME_ADDRESS = home.ID
+             LEFT OUTER JOIN ADDRESSES AS secondary ON p.SECONDARY_ADDRESS = secondary.ID
+             LEFT OUTER JOIN PEOPLE AS spouse ON p.SPOUSE = spouse.ID
+            """;
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
     public static final String UPDATE_PERSON_SQL = "UPDATE PEOPLE SET FIRST_NAME = ?, LAST_NAME = ?, DOB = ?, SALARY = ? WHERE ID = ?";
@@ -81,46 +93,53 @@ public class PeopleRepository extends CRUDRepository<Person> {
         ps.setTimestamp(3, convertDobToTimestamp(person.getDateOfBirth()));
         ps.setBigDecimal(4, person.getSalary());
         ps.setString(5, person.getEmail());
-        person.getHomeAddress().ifPresentOrElse(
-                address ->
-                        saveAddress(ps, 6, address, "Unable to save Home Address"),
-                () ->
-                        saveNullAddress(ps, 6, "Unable to save null address")
-        );
-        person.getSecondaryAddress().ifPresentOrElse(
-                address ->
-                        saveAddress(ps, 7, address, "Unable to save Secondary Address"),
-                () ->
-                        saveNullAddress(ps, 7, "Unable to save null secondary address")
-        );
-        person.getSpouse().ifPresentOrElse(
+        associateAddressWithPerson(person.getHomeAddress(), ps, 6, "Unable to save Home Address");
+        associateAddressWithPerson(person.getSecondaryAddress(), ps, 7, "Unable to save Secondary Address");
+        associatePersonWithPerson(person.getSpouse(), ps, 8, "Unable to save Spouse");
+        associatePersonWithPerson(person.getParent(), ps, 9, "Unable to save Parent");
+    }
+
+    /**
+     * This method is called after a Person entity is saved to the database.
+     * It iterates over the children of the saved Person entity and saves each child to the database.
+     * The save operation is performed by calling the save method of this repository.
+     *
+     * @param entity The Person entity that has just been saved to the database.
+     * @param id The ID of the saved Person entity in the database.
+     */
+    @Override
+    protected void postSave(Person entity, long id) {
+        entity.getChildren().forEach(this::save);
+    }
+
+    private static void associatePersonWithPerson(Optional<Person> person, PreparedStatement ps, int spouseIdColumnIndex, String errorMessage) {
+        person.ifPresentOrElse(
                 spouse ->
                 {
                     try {
-                        ps.setLong(8, spouse.getId());
+                        ps.setLong(spouseIdColumnIndex, spouse.getId());
                     } catch (SQLException e) {
-                        throw new UnableToSaveException("Unable to save Spouse");
+                        throw new UnableToSaveException(errorMessage);
                     }
                 },
                 () ->
                 {
                     try {
-                        ps.setNull(8, Types.BIGINT);
+                        ps.setNull(spouseIdColumnIndex, Types.BIGINT);
                     } catch (SQLException e) {
-                        throw new UnableToSaveException("Unable to save null spouse");
+                        throw new UnableToSaveException(errorMessage + " for null spouse");
                     }
                 }
         );
-        // explicit null check
-//        if (person.getHomeAddress() != null) {
-//            savedAdress = addressRepository.save(person.getHomeAddress());
-//            ps.setLong(6, savedAdress.getId());
-//        } else {
-//            ps.setNull(6, Types.BIGINT);
-//        }
+    }
 
-        // using optional to avoid explicit null check
-
+    private void associateAddressWithPerson(Optional<Address> address, PreparedStatement ps, int addressIdColumnIndex, String errorMessage) {
+        address.ifPresentOrElse(
+                a ->
+                        saveAddress(ps, addressIdColumnIndex, a, errorMessage),
+                () ->
+                        saveNullAddress(ps, addressIdColumnIndex, errorMessage + " for null address")
+        );
     }
 
     /**
@@ -164,11 +183,11 @@ public class PeopleRepository extends CRUDRepository<Person> {
 
         Address homeAddress = extractAddress(rs, "HOME_");
         Address secondaryAddress = extractAddress(rs, "SECONDARY_");
-        Long spouseId = (Long) rs.getObject("SPOUSE_ID");
+        Long spouseId = (Long) rs.getObject("SPOUSE_"+ID);
         Person spouse = null;
         if (spouseId != null) {
-            spouse = new Person(spouseId, rs.getString("SPOUSE_FIRST_NAME"), rs.getString("SPOUSE_LAST_NAME"), rs.getTimestamp("SPOUSE_DOB").toLocalDateTime().atZone(ZoneId.of("+0")), rs.getBigDecimal("SPOUSE_SALARY"));
-            spouse.setEmail(rs.getString("SPOUSE_EMAIL"));
+            spouse = new Person(spouseId, rs.getString("SPOUSE_"+FIRST_NAME), rs.getString("SPOUSE_"+LAST_NAME), rs.getTimestamp("SPOUSE_"+DOB).toLocalDateTime().atZone(ZoneId.of("+0")), rs.getBigDecimal("SPOUSE_"+SALARY));
+            spouse.setEmail(rs.getString("SPOUSE_"+EMAIL));
             Address spouseHomeAddress = extractAddress(rs, "HOME_");
             Address spouseSecondaryAddress = extractAddress(rs, "SECONDARY_");
             spouse.setHomeAddress(spouseHomeAddress);

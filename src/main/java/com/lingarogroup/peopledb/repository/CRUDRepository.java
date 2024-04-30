@@ -22,34 +22,32 @@ public abstract class CRUDRepository<T> {
     }
 
     /**
-     * This method is used to save an entity to the database.
-     * It prepares a SQL statement to avoid SQL injection and has the ability to return auto-generated keys.
-     * The entity's fields are mapped to the PreparedStatement's parameters by calling the mapForSave method.
-     * The SQL statement is executed and the number of affected rows is printed.
-     * The auto-generated key is retrieved from the ResultSet and set as the ID of the entity.
-     * If a SQLException occurs, an UnableToSaveException is thrown.
+     * This method is responsible for saving an entity to the database.
+     * It prepares a SQL statement to prevent SQL injection and is capable of returning auto-generated keys.
+     * The fields of the entity are mapped to the parameters of the PreparedStatement by invoking the mapForSave method.
+     * The auto-generated key is obtained from the ResultSet and assigned as the ID of the entity.
+     * If a SQLException is encountered, an UnableToSaveException is thrown.
      *
-     * @param entity The entity to be saved.
-     * @return The saved entity with the auto-generated ID.
-     * @throws UnableToSaveException If a SQLException occurs.
+     * @param entity The entity that is to be saved.
+     * @return The saved entity, complete with the auto-generated ID.
+     * @throws UnableToSaveException If a SQLException is encountered.
      */
     public T save(T entity) throws UnableToSaveException {
         try {
-            // prepare statement to avoid SQL injection, it has the ability to return auto-generated keys
+            // Prepare the statement to prevent SQL injection, and enable the return of auto-generated keys
             PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.SAVE, this::getSaveSql), Statement.RETURN_GENERATED_KEYS);
             mapForSave(entity, ps);
-            int rowsAffected = ps.executeUpdate();
-            // getGeneratedKeys returns the result set containing the auto-generated keys
+            ps.executeUpdate();
+            // getGeneratedKeys returns the ResultSet containing the auto-generated keys
             ResultSet rs = ps.getGeneratedKeys();
-            // to retrieve the auto-generated key we need to iterate over the result set
+            // To retrieve the auto-generated key, we need to iterate over the ResultSet
             while (rs.next()) {
                 // getLong(1) returns the value of the first column
-                // there is also version with column name
+                // There is also a version with column name
                 long id = rs.getLong(1);
                 setIdByAnnotation(entity, id);
-//                System.out.println(entity);
+                postSave(entity, id);
             }
-//            System.out.printf("Rows affected: %d%n", rowsAffected);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new UnableToSaveException("Unable to save person: " + entity);
@@ -277,7 +275,7 @@ public abstract class CRUDRepository<T> {
                 });
     }
 
-       /**
+    /**
      * This method should return a SQL statement for counting the total number of entities in the database.
      * The returned SQL statement should not require any parameters.
      *
@@ -330,6 +328,16 @@ public abstract class CRUDRepository<T> {
      * @throws NoSqlException If no SQL statement is provided.
      */
     protected String getSaveSql() throws NoSqlException {throw new NoSqlException("No SQL provided");};
+
+    /**
+     * This method is called after an entity is saved to the database.
+     * It can be overridden in subclasses to perform additional operations after the save operation.
+     * By default, this method does nothing.
+     *
+     * @param entity The entity that has just been saved to the database.
+     * @param id The ID of the saved entity in the database.
+     */
+    protected void postSave(T entity, long id) {}
 
     /**
      * This method is used to map the entity's fields to the PreparedStatement's parameters for the save operation.
