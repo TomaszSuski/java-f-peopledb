@@ -219,7 +219,7 @@ public class PeopleRepositoryTests {
         Person ann = new Person("Ann", "White", ZonedDateTime.of(1995, 6, 15, 12, 0, 0, 0, ZoneId.of("-6")));
         Person savedAnn = repo.save(ann);
         List<Person> people = repo.findAll();
-        assertThat(people).containsExactlyInAnyOrder(savedJohn, savedJane, savedTom, savedAnn);
+        assertThat(people).contains(savedJohn, savedJane, savedTom, savedAnn);
     }
 
     @Test

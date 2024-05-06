@@ -76,14 +76,16 @@ public class PeopleRepository extends CRUDRepository<Person> {
 
     public static final String FIND_ALL_SQL = """
             SELECT
-                p.ID, p.FIRST_NAME, p.LAST_NAME, p.DOB, p.SALARY, p.EMAIL, p.HOME_ADDRESS, p.SECONDARY_ADDRESS, p.SPOUSE, p.PARENT_ID,
+                parent.ID AS PARENT_ID, parent.FIRST_NAME AS PARENT_FIRST_NAME, parent.LAST_NAME AS PARENT_LAST_NAME, parent.DOB AS PARENT_DOB, parent.SALARY AS PARENT_SALARY, parent.EMAIL AS PARENT_EMAIL,
+                child.ID AS CHILD_ID, child.FIRST_NAME AS CHILD_FIRST_NAME, child.LAST_NAME AS CHILD_LAST_NAME, child.DOB AS CHILD_DOB, child.SALARY AS CHILD_SALARY, child.EMAIL AS CHILD_EMAIL,
                 home.ID as HOME_ID, home.STREET_ADDRESS as HOME_STREET_ADDRESS, home.ADDRESS2 as HOME_ADDRESS2, home.CITY as HOME_CITY, home.STATE as HOME_STATE, home.POSTCODE as HOME_POSTCODE, home.COUNTRY as HOME_COUNTRY, home.COUNTY as HOME_COUNTY, home.REGION as HOME_REGION,
                 secondary.ID as SECONDARY_ID, secondary.STREET_ADDRESS as SECONDARY_STREET_ADDRESS, secondary.ADDRESS2 as SECONDARY_ADDRESS2, secondary.CITY as SECONDARY_CITY, secondary.STATE as SECONDARY_STATE, secondary.POSTCODE as SECONDARY_POSTCODE, secondary.COUNTRY as SECONDARY_COUNTRY, secondary.COUNTY as SECONDARY_COUNTY, secondary.REGION as SECONDARY_REGION,
                 spouse.ID as SPOUSE_ID, spouse.FIRST_NAME as SPOUSE_FIRST_NAME, spouse.LAST_NAME as SPOUSE_LAST_NAME, spouse.DOB as SPOUSE_DOB, spouse.SALARY as SPOUSE_SALARY, spouse.EMAIL as SPOUSE_EMAIL, spouse.HOME_ADDRESS as SPOUSE_HOME_ADDRESS, spouse.SECONDARY_ADDRESS as SPOUSE_SECONDARY_ADDRESS, spouse.SPOUSE as SPOUSE_SPOUSE, spouse.PARENT_ID as SPOUSE_PARENT_ID
-             FROM PEOPLE p
-             LEFT OUTER JOIN ADDRESSES AS home ON p.HOME_ADDRESS = home.ID
-             LEFT OUTER JOIN ADDRESSES AS secondary ON p.SECONDARY_ADDRESS = secondary.ID
-             LEFT OUTER JOIN PEOPLE AS spouse ON p.SPOUSE = spouse.ID
+            FROM PEOPLE AS parent
+            LEFT OUTER JOIN PEOPLE AS child ON parent.ID = child.PARENT_ID
+            LEFT OUTER JOIN ADDRESSES AS home ON parent.HOME_ADDRESS = home.ID
+            LEFT OUTER JOIN ADDRESSES AS secondary ON parent.SECONDARY_ADDRESS = secondary.ID
+            LEFT OUTER JOIN PEOPLE AS spouse ON parent.SPOUSE = spouse.ID
             """;
     public static final String COUNT_ALL_SQL = "SELECT COUNT(*) AS COUNT FROM PEOPLE";
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
@@ -193,24 +195,31 @@ public class PeopleRepository extends CRUDRepository<Person> {
     @SQL(value = DELETE_PERSON_SQL, operationType = CrudOperation.DELETE)
     Person extractEntityFromResultSet(ResultSet rs) throws SQLException {
         Person parent = null;
+        int loops = 0;
         do {
-            System.out.println("Extracting person");
+            loops++;
             Person extractedParent = extractPerson(rs, "PARENT_");
-            if (!extractedParent.equals(parent)) {
+            if (parent == null) {
                 parent = extractedParent;
-                Address homeAddress = extractAddress(rs, "HOME_");
-                Address secondaryAddress = extractAddress(rs, "SECONDARY_");
-                Long spouseId = (Long) rs.getObject("SPOUSE_"+ID);
-                Person spouse = extractSpouse(rs, spouseId);
-                parent.setHomeAddress(homeAddress);
-                parent.setSecondaryAddress(secondaryAddress);
-                parent.setSpouse(spouse);
+
             }
+            if (!extractedParent.equals(parent)) {
+                rs.previous();
+                break;
+            }
+            Address homeAddress = extractAddress(rs, "HOME_");
+            Address secondaryAddress = extractAddress(rs, "SECONDARY_");
+            Long spouseId = (Long) rs.getObject("SPOUSE_"+ID);
+            Person spouse = extractSpouse(rs, spouseId);
+            parent.setHomeAddress(homeAddress);
+            parent.setSecondaryAddress(secondaryAddress);
+            parent.setSpouse(spouse);
             Person child = extractPerson(rs, "CHILD_");
             if (child != null) {
                 parent.addChild(child);
             }
         } while (rs.next());
+        System.out.println("Loops: " + loops);
         return parent;
     }
 
