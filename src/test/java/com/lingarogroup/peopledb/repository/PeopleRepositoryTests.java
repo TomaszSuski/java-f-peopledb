@@ -1,27 +1,19 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.exception.UnableToInitializeRepositoryException;
 import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.Person;
 import com.lingarogroup.peopledb.model.Region;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,7 +47,7 @@ public class PeopleRepositoryTests {
 
     @BeforeEach
     // it's better to throw SQLException than to catch it in test. Because if the exception will be thrown - the test will fail.
-    void setUp() throws SQLException {
+    void setUp() throws SQLException, UnableToInitializeRepositoryException {
         connection = DriverManager.getConnection("jdbc:h2:~/projects/JAVA/course/peopledb".replace("~", System.getProperty("user.home")));
         connection.setAutoCommit(false);    // setting auto commit to false to avoid real data changes in the database
 //        checkH2Version(connection);

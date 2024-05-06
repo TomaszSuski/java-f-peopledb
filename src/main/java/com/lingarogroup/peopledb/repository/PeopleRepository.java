@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.exception.UnableToInitializeRepositoryException;
 import com.lingarogroup.peopledb.exception.UnableToLoadException;
 import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Address;
@@ -91,7 +92,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
     public static final String DELETE_PERSON_SQL = "DELETE FROM PEOPLE WHERE ID = ?";
     public static final String UPDATE_PERSON_SQL = "UPDATE PEOPLE SET FIRST_NAME = ?, LAST_NAME = ?, DOB = ?, SALARY = ? WHERE ID = ?";
 
-    public PeopleRepository(Connection connection) {
+    public PeopleRepository(Connection connection) throws UnableToInitializeRepositoryException {
         super(connection);
         addressRepository = new AddressRepository(connection);
     }
@@ -195,9 +196,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
     @SQL(value = DELETE_PERSON_SQL, operationType = CrudOperation.DELETE)
     Person extractEntityFromResultSet(ResultSet rs) throws SQLException {
         Person parent = null;
-        int loops = 0;
         do {
-            loops++;
             Person extractedParent = extractPerson(rs, "PARENT_");
             if (parent == null) {
                 parent = extractedParent;
@@ -219,7 +218,6 @@ public class PeopleRepository extends CRUDRepository<Person> {
                 parent.addChild(child);
             }
         } while (rs.next());
-        System.out.println("Loops: " + loops);
         return parent;
     }
 

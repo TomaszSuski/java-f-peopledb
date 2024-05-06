@@ -16,9 +16,19 @@ import java.util.stream.Stream;
 
 public abstract class CRUDRepository<T> {
     protected Connection connection;
+    private PreparedStatement savePS;
+    private PreparedStatement findByIdPS;
+    private PreparedStatement findAllPS;
 
-    public CRUDRepository(Connection connection) {
-        this.connection = connection;
+    public CRUDRepository(Connection connection) throws UnableToInitializeRepositoryException {
+        try {
+            this.connection = connection;
+            savePS = connection.prepareStatement(getSqlByAnnotation(CrudOperation.SAVE, this::getSaveSql), Statement.RETURN_GENERATED_KEYS);
+            findByIdPS = connection.prepareStatement(getSqlByAnnotation(CrudOperation.FIND_BY_ID, this::getFindByIdSql));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new UnableToInitializeRepositoryException("Unable to prepare statements: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -33,25 +43,26 @@ public abstract class CRUDRepository<T> {
      * @throws UnableToSaveException If a SQLException is encountered.
      */
     public T save(T entity) throws UnableToSaveException {
+        Long id = null;
         try {
             // Prepare the statement to prevent SQL injection, and enable the return of auto-generated keys
-            PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.SAVE, this::getSaveSql), Statement.RETURN_GENERATED_KEYS);
-            mapForSave(entity, ps);
-            ps.executeUpdate();
+            savePS.clearParameters();
+            mapForSave(entity, savePS);
+            savePS.executeUpdate();
             // getGeneratedKeys returns the ResultSet containing the auto-generated keys
-            ResultSet rs = ps.getGeneratedKeys();
+            ResultSet rs = savePS.getGeneratedKeys();
             // To retrieve the auto-generated key, we need to iterate over the ResultSet
             while (rs.next()) {
                 // getLong(1) returns the value of the first column
                 // There is also a version with column name
-                long id = rs.getLong(1);
+                id = rs.getLong(1);
                 setIdByAnnotation(entity, id);
-                postSave(entity, id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new UnableToSaveException("Unable to save person: " + entity);
         }
+        postSave(entity, id);
         return entity;
     }
 
@@ -68,9 +79,8 @@ public abstract class CRUDRepository<T> {
     public Optional<T> findById(Long id) throws UnableToLoadException {
         T entity = null;
         try {
-            PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.FIND_BY_ID, this::getFindByIdSql));
-            ps.setLong(1, id);
-            ResultSet rs = ps.executeQuery();
+            findByIdPS.setLong(1, id);
+            ResultSet rs = findByIdPS.executeQuery();
             while (rs.next()) {
                 entity = extractEntityFromResultSet(rs);
             }
@@ -93,10 +103,10 @@ public abstract class CRUDRepository<T> {
     public List<T> findAll() throws UnableToLoadException {
         List<T> entities = new ArrayList<>();
         try {
-            PreparedStatement ps = connection.prepareStatement(getSqlByAnnotation(CrudOperation.FIND_ALL, this::getFindAllSql),
+            findAllPS = connection.prepareStatement(getSqlByAnnotation(CrudOperation.FIND_ALL, this::getFindAllSql),
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = findAllPS.executeQuery();
             while (rs.next()) {
                 T entity = extractEntityFromResultSet(rs);
                 entities.add(entity);

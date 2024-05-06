@@ -1,6 +1,7 @@
 package com.lingarogroup.peopledb.repository;
 
 import com.lingarogroup.peopledb.annotation.SQL;
+import com.lingarogroup.peopledb.exception.UnableToInitializeRepositoryException;
 import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
 import com.lingarogroup.peopledb.model.Region;
@@ -24,7 +25,7 @@ public class AddressRepository extends CRUDRepository<Address> {
     public static final String COUNTY = "COUNTY";
     public static final String REGION = "REGION";
 
-    public AddressRepository(Connection connection) {
+    public AddressRepository(Connection connection) throws UnableToInitializeRepositoryException {
         super(connection);
     }
 

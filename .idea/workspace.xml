@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/exception/UnableToInitializeRepositoryException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/AddressRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/AddressRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
@@ -97,7 +99,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
-    "git-widget-placeholder": "adding-one-to-many-person-with-children",
+    "git-widget-placeholder": "optimising-with-chaching",
     "kotlin-language-version-configured": "true",
     "last_directory_selection": "/home/tomasz_suski/projects/JAVA/course/PeopleDB/src/main/java/com/lingarogroup/peopledb/repository",
     "last_opened_file_path": "/home/tomasz_suski/Downloads/packageSearch-233.11799.196.zip",
@@ -109,8 +111,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
-      <recent name="com.lingarogroup.peopledb.model" />
       <recent name="com.lingarogroup.peopledb.exception" />
+      <recent name="com.lingarogroup.peopledb.model" />
       <recent name="com.lingarogroup.peopledb.annotation" />
       <recent name="com.lingarogroup.peopledb.repository" />
     </key>
@@ -121,7 +123,7 @@
       <recent name="com.lingarogroup.peopledb.model" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.PeopleRepositoryTests.canFindAllPeople">
+  <component name="RunManager" selected="Gradle.PeopleRepositoryTests">
     <configuration name="PeopleRepositoryTests" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -251,11 +253,11 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.PeopleRepositoryTests.canFindAllPeople" />
         <item itemvalue="Gradle.PeopleRepositoryTests" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithChildren" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canFindAllPeople" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithChildren" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonById" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithChildren" />
       </list>
     </recent_temporary>
   </component>
