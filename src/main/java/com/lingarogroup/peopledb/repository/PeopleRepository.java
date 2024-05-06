@@ -1,5 +1,6 @@
 package com.lingarogroup.peopledb.repository;
 
+import com.lingarogroup.peopledb.exception.UnableToLoadException;
 import com.lingarogroup.peopledb.exception.UnableToSaveException;
 import com.lingarogroup.peopledb.model.Address;
 import com.lingarogroup.peopledb.model.CrudOperation;
@@ -11,7 +12,9 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class PeopleRepository extends CRUDRepository<Person> {
     // The AddressRepository is used to save the home address of a Person object.
@@ -44,24 +47,39 @@ public class PeopleRepository extends CRUDRepository<Person> {
 //         LEFT OUTER JOIN ADDRESSES AS secondary ON p.SECONDARY_ADDRESS = secondary.ID
 //         WHERE p.ID = ?
 //        """);
+//    public final String FIND_BY_ID_SQL = """
+//            SELECT
+//                p.ID, p.FIRST_NAME, p.LAST_NAME, p.DOB, p.SALARY, p.EMAIL, p.HOME_ADDRESS, p.SECONDARY_ADDRESS, p.SPOUSE,
+//                home.ID as HOME_ID, home.STREET_ADDRESS as HOME_STREET_ADDRESS, home.ADDRESS2 as HOME_ADDRESS2, home.CITY as HOME_CITY, home.STATE as HOME_STATE, home.POSTCODE as HOME_POSTCODE, home.COUNTRY as HOME_COUNTRY, home.COUNTY as HOME_COUNTY, home.REGION as HOME_REGION,
+//                secondary.ID as SECONDARY_ID, secondary.STREET_ADDRESS as SECONDARY_STREET_ADDRESS, secondary.ADDRESS2 as SECONDARY_ADDRESS2, secondary.CITY as SECONDARY_CITY, secondary.STATE as SECONDARY_STATE, secondary.POSTCODE as SECONDARY_POSTCODE, secondary.COUNTRY as SECONDARY_COUNTRY, secondary.COUNTY as SECONDARY_COUNTY, secondary.REGION as SECONDARY_REGION,
+//                spouse.ID as SPOUSE_ID, spouse.FIRST_NAME as SPOUSE_FIRST_NAME, spouse.LAST_NAME as SPOUSE_LAST_NAME, spouse.DOB as SPOUSE_DOB, spouse.SALARY as SPOUSE_SALARY, spouse.EMAIL as SPOUSE_EMAIL, spouse.HOME_ADDRESS as SPOUSE_HOME_ADDRESS, spouse.SECONDARY_ADDRESS as SPOUSE_SECONDARY_ADDRESS, spouse.SPOUSE as SPOUSE_SPOUSE
+//             FROM PEOPLE p
+//             LEFT OUTER JOIN ADDRESSES AS home ON p.HOME_ADDRESS = home.ID
+//             LEFT OUTER JOIN ADDRESSES AS secondary ON p.SECONDARY_ADDRESS = secondary.ID
+//             LEFT OUTER JOIN PEOPLE AS spouse ON p.SPOUSE = spouse.ID
+//             WHERE p.ID = ?
+//            """;
     public final String FIND_BY_ID_SQL = """
             SELECT
-                p.ID, p.FIRST_NAME, p.LAST_NAME, p.DOB, p.SALARY, p.EMAIL, p.HOME_ADDRESS, p.SECONDARY_ADDRESS, p.SPOUSE,
+                parent.ID AS PARENT_ID, parent.FIRST_NAME AS PARENT_FIRST_NAME, parent.LAST_NAME AS PARENT_LAST_NAME, parent.DOB AS PARENT_DOB, parent.SALARY AS PARENT_SALARY, parent.EMAIL AS PARENT_EMAIL,
+                child.ID AS CHILD_ID, child.FIRST_NAME AS CHILD_FIRST_NAME, child.LAST_NAME AS CHILD_LAST_NAME, child.DOB AS CHILD_DOB, child.SALARY AS CHILD_SALARY, child.EMAIL AS CHILD_EMAIL,
                 home.ID as HOME_ID, home.STREET_ADDRESS as HOME_STREET_ADDRESS, home.ADDRESS2 as HOME_ADDRESS2, home.CITY as HOME_CITY, home.STATE as HOME_STATE, home.POSTCODE as HOME_POSTCODE, home.COUNTRY as HOME_COUNTRY, home.COUNTY as HOME_COUNTY, home.REGION as HOME_REGION,
                 secondary.ID as SECONDARY_ID, secondary.STREET_ADDRESS as SECONDARY_STREET_ADDRESS, secondary.ADDRESS2 as SECONDARY_ADDRESS2, secondary.CITY as SECONDARY_CITY, secondary.STATE as SECONDARY_STATE, secondary.POSTCODE as SECONDARY_POSTCODE, secondary.COUNTRY as SECONDARY_COUNTRY, secondary.COUNTY as SECONDARY_COUNTY, secondary.REGION as SECONDARY_REGION,
                 spouse.ID as SPOUSE_ID, spouse.FIRST_NAME as SPOUSE_FIRST_NAME, spouse.LAST_NAME as SPOUSE_LAST_NAME, spouse.DOB as SPOUSE_DOB, spouse.SALARY as SPOUSE_SALARY, spouse.EMAIL as SPOUSE_EMAIL, spouse.HOME_ADDRESS as SPOUSE_HOME_ADDRESS, spouse.SECONDARY_ADDRESS as SPOUSE_SECONDARY_ADDRESS, spouse.SPOUSE as SPOUSE_SPOUSE
-             FROM PEOPLE p
-             LEFT OUTER JOIN ADDRESSES AS home ON p.HOME_ADDRESS = home.ID
-             LEFT OUTER JOIN ADDRESSES AS secondary ON p.SECONDARY_ADDRESS = secondary.ID
-             LEFT OUTER JOIN PEOPLE AS spouse ON p.SPOUSE = spouse.ID
-             WHERE p.ID = ?
+            FROM PEOPLE AS parent
+            LEFT OUTER JOIN PEOPLE AS child ON parent.ID = child.PARENT_ID
+            LEFT OUTER JOIN ADDRESSES AS home ON parent.HOME_ADDRESS = home.ID
+            LEFT OUTER JOIN ADDRESSES AS secondary ON parent.SECONDARY_ADDRESS = secondary.ID
+            LEFT OUTER JOIN PEOPLE AS spouse ON parent.SPOUSE = spouse.ID
+            WHERE parent.ID = ?;
             """;
+
     public static final String FIND_ALL_SQL = """
             SELECT
-                p.ID, p.FIRST_NAME, p.LAST_NAME, p.DOB, p.SALARY, p.EMAIL, p.HOME_ADDRESS, p.SECONDARY_ADDRESS, p.SPOUSE,
+                p.ID, p.FIRST_NAME, p.LAST_NAME, p.DOB, p.SALARY, p.EMAIL, p.HOME_ADDRESS, p.SECONDARY_ADDRESS, p.SPOUSE, p.PARENT_ID,
                 home.ID as HOME_ID, home.STREET_ADDRESS as HOME_STREET_ADDRESS, home.ADDRESS2 as HOME_ADDRESS2, home.CITY as HOME_CITY, home.STATE as HOME_STATE, home.POSTCODE as HOME_POSTCODE, home.COUNTRY as HOME_COUNTRY, home.COUNTY as HOME_COUNTY, home.REGION as HOME_REGION,
                 secondary.ID as SECONDARY_ID, secondary.STREET_ADDRESS as SECONDARY_STREET_ADDRESS, secondary.ADDRESS2 as SECONDARY_ADDRESS2, secondary.CITY as SECONDARY_CITY, secondary.STATE as SECONDARY_STATE, secondary.POSTCODE as SECONDARY_POSTCODE, secondary.COUNTRY as SECONDARY_COUNTRY, secondary.COUNTY as SECONDARY_COUNTY, secondary.REGION as SECONDARY_REGION,
-                spouse.ID as SPOUSE_ID, spouse.FIRST_NAME as SPOUSE_FIRST_NAME, spouse.LAST_NAME as SPOUSE_LAST_NAME, spouse.DOB as SPOUSE_DOB, spouse.SALARY as SPOUSE_SALARY, spouse.EMAIL as SPOUSE_EMAIL, spouse.HOME_ADDRESS as SPOUSE_HOME_ADDRESS, spouse.SECONDARY_ADDRESS as SPOUSE_SECONDARY_ADDRESS, spouse.SPOUSE as SPOUSE_SPOUSE
+                spouse.ID as SPOUSE_ID, spouse.FIRST_NAME as SPOUSE_FIRST_NAME, spouse.LAST_NAME as SPOUSE_LAST_NAME, spouse.DOB as SPOUSE_DOB, spouse.SALARY as SPOUSE_SALARY, spouse.EMAIL as SPOUSE_EMAIL, spouse.HOME_ADDRESS as SPOUSE_HOME_ADDRESS, spouse.SECONDARY_ADDRESS as SPOUSE_SECONDARY_ADDRESS, spouse.SPOUSE as SPOUSE_SPOUSE, spouse.PARENT_ID as SPOUSE_PARENT_ID
              FROM PEOPLE p
              LEFT OUTER JOIN ADDRESSES AS home ON p.HOME_ADDRESS = home.ID
              LEFT OUTER JOIN ADDRESSES AS secondary ON p.SECONDARY_ADDRESS = secondary.ID
@@ -174,16 +192,58 @@ public class PeopleRepository extends CRUDRepository<Person> {
     @SQL(value = COUNT_ALL_SQL, operationType = CrudOperation.COUNT)
     @SQL(value = DELETE_PERSON_SQL, operationType = CrudOperation.DELETE)
     Person extractEntityFromResultSet(ResultSet rs) throws SQLException {
-        long personId = rs.getLong(ID);
-        String firstName = rs.getString(FIRST_NAME);
-        String lastName = rs.getString(LAST_NAME);
-        Timestamp dob = rs.getTimestamp(DOB);
-        ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
-        BigDecimal salary = rs.getBigDecimal(SALARY);
+        Person parent = null;
+        do {
+            System.out.println("Extracting person");
+            Person extractedParent = extractPerson(rs, "PARENT_");
+            if (!extractedParent.equals(parent)) {
+                parent = extractedParent;
+                Address homeAddress = extractAddress(rs, "HOME_");
+                Address secondaryAddress = extractAddress(rs, "SECONDARY_");
+                Long spouseId = (Long) rs.getObject("SPOUSE_"+ID);
+                Person spouse = extractSpouse(rs, spouseId);
+                parent.setHomeAddress(homeAddress);
+                parent.setSecondaryAddress(secondaryAddress);
+                parent.setSpouse(spouse);
+            }
+            Person child = extractPerson(rs, "CHILD_");
+            if (child != null) {
+                parent.addChild(child);
+            }
+        } while (rs.next());
+        return parent;
+    }
 
-        Address homeAddress = extractAddress(rs, "HOME_");
-        Address secondaryAddress = extractAddress(rs, "SECONDARY_");
-        Long spouseId = (Long) rs.getObject("SPOUSE_"+ID);
+    private Person extractPerson(ResultSet rs, String aliasPrefix) throws SQLException {
+        long personId = rs.getLong(aliasPrefix + ID);
+        if (personId == 0) return null;
+        String firstName = rs.getString(aliasPrefix + FIRST_NAME);
+        String lastName = rs.getString(aliasPrefix + LAST_NAME);
+        Timestamp dob = rs.getTimestamp(aliasPrefix + DOB);
+        ZonedDateTime dateOFBirth = dob.toLocalDateTime().atZone(ZoneId.of("+0"));
+        BigDecimal salary = rs.getBigDecimal(aliasPrefix + SALARY);
+        return new Person(personId, firstName, lastName, dateOFBirth, salary);
+    }
+    private Set<Person> associateChildren(long personId) throws SQLException {
+        Set<Person> children = new HashSet<>();
+        ResultSet crs = this.findChildrenByParentId(personId);
+        while (crs.next()) {
+            children.add(extractEntityFromResultSet(crs));
+        }
+        return children;
+    }
+
+    private ResultSet findChildrenByParentId(long personId) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM PEOPLE WHERE PARENT_ID = ?");
+            ps.setLong(1, personId);
+            return ps.executeQuery();
+        } catch (SQLException e) {
+            throw new UnableToLoadException("Unable to find children for person with ID: " + personId);
+        }
+    }
+
+    private Person extractSpouse(ResultSet rs, Long spouseId) throws SQLException {
         Person spouse = null;
         if (spouseId != null) {
             spouse = new Person(spouseId, rs.getString("SPOUSE_"+FIRST_NAME), rs.getString("SPOUSE_"+LAST_NAME), rs.getTimestamp("SPOUSE_"+DOB).toLocalDateTime().atZone(ZoneId.of("+0")), rs.getBigDecimal("SPOUSE_"+SALARY));
@@ -193,12 +253,7 @@ public class PeopleRepository extends CRUDRepository<Person> {
             spouse.setHomeAddress(spouseHomeAddress);
             spouse.setSecondaryAddress(spouseSecondaryAddress);
         }
-
-        Person person = new Person(personId, firstName, lastName, dateOFBirth, salary);
-        person.setHomeAddress(homeAddress);
-        person.setSecondaryAddress(secondaryAddress);
-        person.setSpouse(spouse);
-        return person;
+        return spouse;
     }
 
     private Address extractAddress(ResultSet rs, String aliasPrefix) throws SQLException {

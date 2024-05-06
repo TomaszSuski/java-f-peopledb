@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="39057e61-0442-4451-b412-408a2bc5ea75" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/model/Person.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/CRUDRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lingarogroup/peopledb/repository/PeopleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/lingarogroup/peopledb/repository/PeopleRepositoryTests.java" afterDir="false" />
     </list>
@@ -75,6 +73,7 @@
     "Gradle.PeopleRepositoryTests.canFindAllPeople.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonById.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonByIdWithAddress.executor": "Run",
+    "Gradle.PeopleRepositoryTests.canFindPersonByIdWithChildren.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonByIdWithSecondaryAddress.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonByIdWithSpous.executor": "Run",
     "Gradle.PeopleRepositoryTests.canFindPersonByIdWithTwoAddresses.executor": "Run",
@@ -146,7 +145,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.canFindAllPeople" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canFindPersonById" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -159,7 +158,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindAllPeople&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonById&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -170,7 +169,7 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="PeopleRepositoryTests.canFindPersonByIdWithSpous" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="PeopleRepositoryTests.canFindPersonByIdWithChildren" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -183,7 +182,7 @@
           <list>
             <option value=":test" />
             <option value="--tests" />
-            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonByIdWithSpous&quot;" />
+            <option value="&quot;com.lingarogroup.peopledb.repository.PeopleRepositoryTests.canFindPersonByIdWithChildren&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -243,8 +242,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.PeopleRepositoryTests.canFindAllPeople" />
-      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithSpous" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonById" />
+      <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithChildren" />
       <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithChildren" />
       <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSpouse" />
       <item itemvalue="Gradle.PeopleRepositoryTests" />
@@ -252,10 +251,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.PeopleRepositoryTests" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSpouse" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canFindAllPeople" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithChildren" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonById" />
         <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithChildren" />
-        <item itemvalue="Gradle.PeopleRepositoryTests.canFindPersonByIdWithSpous" />
+        <item itemvalue="Gradle.PeopleRepositoryTests.canSavePersonWithSpouse" />
       </list>
     </recent_temporary>
   </component>

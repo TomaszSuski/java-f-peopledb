@@ -128,13 +128,14 @@ public class PeopleRepositoryTests {
     }
 
     @Test
-    public void canSavePersonWithChildren() {
+    public void canSavePersonWithChildren() throws SQLException {
         Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
         john.addChild(new Person("Tom", "Smith", ZonedDateTime.of(2010, 1, 1, 0, 0, 0, 0, ZoneId.of("-6"))));
         john.addChild(new Person("Ann", "Smith", ZonedDateTime.of(2015, 6, 15, 12, 0, 0, 0, ZoneId.of("-6"))));
 
         Person savedPerson = repo.save(john);
         savedPerson.getChildren().forEach(child -> assertThat(child.getId()).isGreaterThan(0));
+//        connection.commit();
     }
 
     @Test
@@ -188,6 +189,16 @@ public class PeopleRepositoryTests {
         Person savedPerson = repo.save(john);
         Person foundPerson = repo.findById(savedPerson.getId()).get();
         assertThat(foundPerson.getSpouse().get()).isEqualTo(savedPerson.getSpouse().get());
+    }
+
+    @Test
+    public void canFindPersonByIdWithChildren() {
+        Person john = new Person("John", "Smith", ZonedDateTime.of(1980, 11, 15, 15, 15, 0, 0, ZoneId.of("-6")));
+        john.addChild(new Person("Tom", "Smith", ZonedDateTime.of(2010, 1, 1, 0, 0, 0, 0, ZoneId.of("-6"))));
+        john.addChild(new Person("Ann", "Smith", ZonedDateTime.of(2015, 6, 15, 12, 0, 0, 0, ZoneId.of("-6"))));
+        Person savedPerson = repo.save(john);
+        Person foundPerson = repo.findById(savedPerson.getId()).get();
+        assertThat(foundPerson.getChildren()).contains(savedPerson.getChildren().toArray(new Person[]{}));
     }
 
     @Test
